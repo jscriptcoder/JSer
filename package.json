@@ -1,0 +1,24 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "description": "Work in progress",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jscriptcoder/JSer.git"
+  },
+  "author": "Francisco Ramos <jscriptcoder@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jscriptcoder/JSer/issues"
+  },
+  "homepage": "https://github.com/jscriptcoder/JSer",
+  "devDependencies": {
+    "gulp": "~3.9.0",
+    "gulp-sass": "~2.0.4",
+    "gulp-typescript": "~2.9.2"
+  }
+}
