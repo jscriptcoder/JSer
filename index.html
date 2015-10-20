@@ -5,18 +5,18 @@ To change this template use Tools | Templates.
 <html>
 <head>
     <title>..:: JSer Test ::..</title>
+    <link rel="stylesheet" href="build/css/styles.css" />
 </head>
 <body>
 
+    <!-- JSer DOM element -->
     <div id="jser"></div>
     
     <script src="https://jspm.io/system@0.19.js"></script>
     
     <script>
-        
-        System.config({ baseURL: '/build/js' });
+        System.paths['*'] = '/build/js/*.js'
         System.import('index');
-        
     </script>
     
 </body>
