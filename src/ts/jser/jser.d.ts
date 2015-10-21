@@ -5,5 +5,7 @@ interface JSerAPI {
 interface JSerConfig {
     backgroundColor?: string;
     fontColor?: string;
+    fontSize?: string;
     fontFamily?: string;
+    promptSymbol?: string;
 }

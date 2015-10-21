@@ -1,10 +1,9 @@
 export const uid = (() => {
-    let uid = 0;
-    return () => ++uid;
+    let id = 0;
+    return () => ++id;
 })();
 
 export function extend(target: Object, ...sources: Object[]) {
-    
     if (sources && sources.length) {
         for(let source of sources) {
             if (source) {

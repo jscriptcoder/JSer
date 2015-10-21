@@ -12,10 +12,13 @@ To change this template use Tools | Templates.
     <!-- JSer DOM element -->
     <div id="jser"></div>
     
-    <script src="https://jspm.io/system@0.19.js"></script>
+    <script src="node_modules/systemjs/dist/system.js"></script>
     
     <script>
-        System.paths['*'] = '/build/js/*.js'
+        System.config({
+            baseURL: './build/js/',
+            defaultJSExtensions: true
+        });
         System.import('index');
     </script>
     

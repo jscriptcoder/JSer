@@ -8,7 +8,9 @@ export default class JSer {
     static DEFAULT_CONFIG: JSerConfig = {
         backgroundColor: 'black',
         fontColor: '#44D544',
+        fontSize: '12px',
         fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
+        promptSymbol: 'jser>',
     };
     
     private __uid__: number;
@@ -34,28 +36,26 @@ export default class JSer {
     
     private __createUI__() {
         
-        this.__generateStyles__();
+        // Generates the custom styles
+        let style = document.createElement('style');
+        let stylesTmpl = tmpl.JSER_STYLES
+                            .replace(/\$uid/g, this.__uid__.toString())
+                            .replace(/\$font-family/g, this.__config__.fontFamily)
+                            .replace(/\$font-color/g, this.__config__.fontColor)
+                            .replace(/\$font-size/g, this.__config__.fontSize)
+                            .replace(/\$background-color/g, this.__config__.backgroundColor);
+
+        style.innerHTML = stylesTmpl;
+        document.getElementsByTagName('head')[0].appendChild(style);
         
-        this.__el__.innerHTML = tmpl.JSER_TMPL;
-        this.__el__.classList.add(`jser-${this.__uid__}`);
+        // Crestes JSer DOM
+        this.__el__.classList.add(`jser_${this.__uid__}`);
+        this.__el__.innerHTML = tmpl.JSER_TMPL
+                                    .replace(/\$prompt-symbol/, this.__config__.promptSymbol);
         
         this.__output__ = <HTMLElement>this.__el__.querySelector('.jser-output');
         this.__input__ = <HTMLElement>this.__el__.querySelector('.jser-prompt-input');
         this.__cursor__ = <HTMLElement>this.__el__.querySelector('.jser-prompt-cursor');
-    }
-    
-    private __generateStyles__() {
-        
-        let stylesTmpl = utils.JSER_STYLES
-                            .replace(/@uid/g, this.__uid__)
-                            .replace(/@font-family/g, this.__config__.fontFamily)
-                            .replace(/@font-color/g, this.__config__.fontColor)
-                            .replace(/@background-color/g, this.__config__.backgroundColor)
-
-        let style = document.createElement('style');
-        style.innerHTML = stylesTmpl;
-        
-        document.getElementsByTagName('head')[0].appendChild(style);
     }
     
 }
