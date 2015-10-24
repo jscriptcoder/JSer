@@ -1,12 +1,15 @@
 /// <reference path="jser.d.ts" />
 
 import * as utils from './utils';
-import * as tmpl from './tmpl';
+import * as tmpl from './templates';
+
+import JserOutput from './output'
+import JserPrompt from './prompt'
 
 export default class JSer {
     
     static DEFAULT_CONFIG: JSerConfig = {
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         fontColor: '#44D544',
         fontSize: '12px',
         fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
@@ -16,27 +19,26 @@ export default class JSer {
     private __uid__: number;
     
     private __el__: HTMLElement;
-    private __output__: HTMLElement;
-    private __input__: HTMLElement;
-    private __cursor__: HTMLElement;
     
     private __api__: JSerAPI;
     private __config__: JSerConfig;
     
+    private __output__: JserOutput;
+    private __prompt__: JserPrompt;
+    
     constructor(el: HTMLElement, api: JSerAPI, config?: JSerConfig) {
         
-        this.__uid__ = utils.uid();
+        this.__uid = utils.uid();
         
         this.__el__ = el;
         this.__api__ = api;
         this.__config__ = utils.extend({}, JSer.DEFAULT_CONFIG, config);
         
-        this.__createUI__();
+        this.__generateStyles__();
+        this.__setupDOM__();
     }
     
-    private __createUI__() {
-        
-        // Generates the custom styles
+    private __generateStyles__() {
         let style = document.createElement('style');
         let stylesTmpl = tmpl.JSER_STYLES
                             .replace(/\$uid/g, this.__uid__.toString())
@@ -47,15 +49,15 @@ export default class JSer {
 
         style.innerHTML = stylesTmpl;
         document.getElementsByTagName('head')[0].appendChild(style);
-        
-        // Crestes JSer DOM
+    }
+    
+    private __setupDOM__() {
         this.__el__.classList.add(`jser_${this.__uid__}`);
         this.__el__.innerHTML = tmpl.JSER_TMPL
                                     .replace(/\$prompt-symbol/, this.__config__.promptSymbol);
         
-        this.__output__ = <HTMLElement>this.__el__.querySelector('.jser-output');
-        this.__input__ = <HTMLElement>this.__el__.querySelector('.jser-prompt-input');
-        this.__cursor__ = <HTMLElement>this.__el__.querySelector('.jser-prompt-cursor');
+        this.__output__ = new JserOutput(<HTMLElement>this.__el__.querySelector('.jser-output'));
+        this.__prompt__ = new JserPrompt(<HTMLElement>this.__el__.querySelector('.jser-prompt-input'));
     }
     
 }

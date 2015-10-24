@@ -1,5 +1,5 @@
 export const JSER_STYLES = `
-    @keyframes jser_$uid-cursor-blink {
+    @keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -9,7 +9,7 @@ export const JSER_STYLES = `
             color: $font-color;
         }
     }
-    @-webkit-keyframes jser_$uid-cursor-blink {
+    @-webkit-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -19,7 +19,7 @@ export const JSER_STYLES = `
             color: $font-color;
         }
     }
-    @-ms-keyframes jser_$uid-cursor-blink {
+    @-ms-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -29,7 +29,7 @@ export const JSER_STYLES = `
             color: $font-color;
         }
     }
-    @-moz-keyframes jser_$uid-cursor-blink {
+    @-moz-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -64,8 +64,8 @@ export const JSER_STYLES = `
     .jser_$uid .jser-prompt-cursor {}
 
     .jser_$uid .jser-prompt-cursor.blink {
-        -webkit-animation: jser_$uid-cursor-blink 1s infinite steps(1);
-        animation: jser_$uid-cursor-blink_$uid 1s infinite steps(1);
+        -webkit-animation: jser_$uid-blink 1s infinite steps(1);
+        animation: jser_$uid-blink 1s infinite steps(1);
     }
 
 `;
