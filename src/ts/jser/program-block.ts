@@ -1,4 +1,4 @@
-import {repeatStr, regExp} from './utils';
+import {repeatStr} from './utils';
 
 const BEGIN_BLOCK_RE = new RegExp('\\{$');
 const END_BLOCK_RE = new RegExp('\\}$');
