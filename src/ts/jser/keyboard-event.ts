@@ -51,7 +51,7 @@ export default class JserKeyboardEvent {
                 break;
             case 9: // TAB
                 event.preventDefault();
-                sys.interrupt('keypress', 'tab');
+                this.__onKeypressHandler__('keypress', 'tab');
                 break;
             case 13: // ENTER
                 event.preventDefault();
@@ -72,7 +72,7 @@ export default class JserKeyboardEvent {
             case 67: // C
                 if (event.ctrlKey) {
                     event.preventDefault();
-                    sys.interrupt('copy');
+                    this.__onKeypressHandler__('copy');
                 }
                 break;
         }

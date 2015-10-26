@@ -10,10 +10,8 @@ export function extend(target: Object, ...sources: Object[]): Object {
     if (Array.isArray(sources)) {
         for(let source of sources) {
             if (source) {
-                for (let prop in source) {
-                    if (source.hasOwnProperty(prop)) {
-                        target[prop] = source[prop];
-                    }
+                for (let prop of Object.keys(source)) {
+                    target[prop] = source[prop];
                 }
             }
         }
@@ -23,10 +21,8 @@ export function extend(target: Object, ...sources: Object[]): Object {
 }
     
 export function compileTmpl(tmpl: string, hashMap: {[idx: string]: string}): string {
-    for(let key in keyVal) {
-        if (hashMap.hasOwnProperty(key)) {
-            tmpl = tmpl.replace(new RegExp(`\\$${key}`, 'g'));
-        }
+    for(let key of Object.keys(hashMap)) {
+        tmpl = tmpl.replace(new RegExp(`\\$${key}`, 'g'), hashMap[key]);
     }
     
     return tmpl;

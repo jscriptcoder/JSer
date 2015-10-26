@@ -6,4 +6,5 @@ export default class JserPrompt extends Element {
         super(el);
     }
     
+    public destroy() {}
 }
