@@ -1,5 +1,5 @@
-export const JSER_STYLES = `
-    @keyframes jser_$uid-blink {
+export const JSER_STYLES: string = `
+    @-webkit-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -9,7 +9,7 @@ export const JSER_STYLES = `
             color: $font-color;
         }
     }
-    @-webkit-keyframes jser_$uid-blink {
+    @-moz-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -29,7 +29,17 @@ export const JSER_STYLES = `
             color: $font-color;
         }
     }
-    @-moz-keyframes jser_$uid-blink {
+    @-o-keyframes jser_$uid-blink {
+        0%, 100% {
+            background-color: $font-color;
+            color: $background-color;
+        }
+        50% {
+            background-color: $background-color;
+            color: $font-color;
+        }
+    }
+    @keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;
             color: $background-color;
@@ -55,6 +65,10 @@ export const JSER_STYLES = `
 
     .jser_$uid .jser-output {}
 
+    .jser_$uid .jser-output .result {}
+    .jser_$uid .jser-output .warning {}
+    .jser_$uid .jser-output .error {}
+
     .jser_$uid .jser-prompt {}
 
     .jser_$uid .jser-prompt-symbol {}
@@ -65,16 +79,19 @@ export const JSER_STYLES = `
 
     .jser_$uid .jser-prompt-cursor.blink {
         -webkit-animation: jser_$uid-blink 1s infinite steps(1);
+        -moz-animation: jser_$uid-blink 1s infinite steps(1);
+        -ms-animation: jser_$uid-blink 1s infinite steps(1);
+        -o-animation: jser_$uid-blink 1s infinite steps(1);
         animation: jser_$uid-blink 1s infinite steps(1);
     }
 
 `;
 
-export const JSER_TMPL = `
+export const JSER_TMPL: string = `
     <div class="jser-wrapper">
         <div class="jser-output"></div>
         <div class="jser-prompt">
-            <span class="jser-prompt-symbol">$prompt-symbol</span>
+            <span class="jser-prompt-symbol"></span>
             <span class="jser-prompt-input">
                 <span class="jser-prompt-cursor blink">&nbsp;</span>
             </span>

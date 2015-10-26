@@ -1,3 +1,5 @@
+import {createElement} from './utils';
+
 export default class JserOutput {
     
     private __el__: HTMLElement;
@@ -6,23 +8,20 @@ export default class JserOutput {
         this.__el__ = el;
     }
     
-    public print(message: string, type?: string) {
+    public print(message: string, type?: string): void {
         if (Array.isArray(message)) { // there are more than one line
             for(let msg of message) {
-                this.print(msg, type);    
+                this.print(msg, type);
             }
         } else {
-            let div = document.createElement('div');
+            let div: HTMLElement = createElement();
             div.innerHTML = message;
 
-            //if (typeof type === 'string') div.className = type;
+            if (typeof type === 'string') div.className = type;
 
             this.__el__.appendChild(div);
-
         }
     }
     
-    public empty() {
-        
-    }
+    public destroy() {}
 }
