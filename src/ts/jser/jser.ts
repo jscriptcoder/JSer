@@ -1,5 +1,6 @@
 /// <reference path="jser.d.ts" />
 
+import Element from './element';
 import * as utils from './utils';
 import * as tmpl from './templates';
 
@@ -15,11 +16,9 @@ const DEFAULT_CONFIG: JSerConfig = {
     tabLength: 4
 };
     
-export default class JSer {
+export default class JSer extends Element {
         
     private __uid__: number;
-    
-    private __el__: HTMLElement;
     
     private __api__: JSerAPI;
     private __config__: JSerConfig;
@@ -29,9 +28,10 @@ export default class JSer {
     
     constructor(el: HTMLElement, api: JSerAPI, config?: JSerConfig) {
         
-        this.__uid = utils.uid();
+        super(el);
         
-        this.__el__ = el;
+        this.__uid__ = utils.uid();
+        
         this.__api__ = api;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         

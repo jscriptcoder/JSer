@@ -15,13 +15,13 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
 
 export default class JserKeyboardEvent {
     
-    private __el__: HTMLElement;
+    private __target__: HTMLElement;
     private __onKeypressHandler__: Function;
     private __onKeypressListener__: EventListener;
     private __onKeydownListener__: EventListener;
     
-    constructor(el: HTMLElement, onKeypressHandler: Function) {
-        this.__el__ = el;
+    constructor(target: HTMLElement, onKeypressHandler: Function) {
+        this.__target__ = target;
         this.__onKeypressHandler__ = onKeypressHandler;
         this.__onKeypressListener__ = this.__onKeypress__.bind(this);
         this.__onKeydownListener__ = this.__onKeydown__.bind(this);
@@ -30,8 +30,8 @@ export default class JserKeyboardEvent {
     }
     
     private __setupEvents__() {
-        this.__el__.addEventListener('keypress', this.__onKeypressListener__);
-        this.__el__.addEventListener('keydown', this.__onKeydownListener__);
+        this.__target__.addEventListener('keypress', this.__onKeypressListener__);
+        this.__target__.addEventListener('keydown', this.__onKeydownListener__);
     }
     
     private __onKeypress__(event: KeyboardEvent) {
@@ -79,8 +79,8 @@ export default class JserKeyboardEvent {
     }
     
     public destroy() {
-        this.__el__.removeEventListener('keypress', this.__onKeypressListener__);
-        this.__el__.removeEventListener('keydown', this.__onKeydownListener__);
+        this.__target__.removeEventListener('keypress', this.__onKeypressListener__);
+        this.__target__.removeEventListener('keydown', this.__onKeydownListener__);
     }
     
 }

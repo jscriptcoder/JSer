@@ -1,11 +1,10 @@
+import Element from './element';
 import {createElement} from './utils';
 
-export default class JserOutput {
-    
-    private __el__: HTMLElement;
+export default class JserOutput extends Element {
     
     constructor(el: HTMLElement) {
-        this.__el__ = el;
+        super(el);
     }
     
     public print(message: string, type?: string): void {
