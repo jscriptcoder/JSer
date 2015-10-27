@@ -1,7 +1,7 @@
-import Element from './element';
 import {createElement} from './utils';
+import Element from './element';
 
-export default class JserOutput extends Element {
+export default class Output extends Element {
     
     constructor(el: HTMLElement) {
         super(el);

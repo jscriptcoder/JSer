@@ -29,7 +29,7 @@ export function compileTmpl(tmpl: string, hashMap: {[idx: string]: string}): str
 }
     
 export function injectStyles(styles: string): void {
-    let style = document.createElement('style');
+    let style = doc.createElement('style');
     style.innerHTML = styles;
     head.appendChild(style);
 }

@@ -1,4 +1,4 @@
-export const JSER_STYLES: string = `
+export const JSER_STYLES_TMPL: string = `
     @-webkit-keyframes jser_$uid-blink {
         0%, 100% {
             background-color: $font-color;

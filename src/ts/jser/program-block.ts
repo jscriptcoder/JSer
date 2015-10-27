@@ -3,7 +3,7 @@ import {repeatStr} from './utils';
 const BEGIN_BLOCK_RE = new RegExp('\\{$');
 const END_BLOCK_RE = new RegExp('\\}$');
 
-export default class JserProgramBlock {
+export default class ProgramBlock {
 
     private __lines__: string[];
     private __brackets__: boolean[];

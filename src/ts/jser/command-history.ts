@@ -1,4 +1,4 @@
-export default class JserCommandHistory {
+export default class CommandHistory {
     
     private __commands__: string[];
     private __index__: number;

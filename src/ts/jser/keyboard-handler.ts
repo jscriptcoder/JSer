@@ -13,7 +13,7 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
     46: 'del'
 };
 
-export default class JserKeyboardEvent {
+export default class KeyboardHandler {
     
     private __target__: HTMLElement;
     private __onKeypressHandler__: Function;
@@ -25,7 +25,7 @@ export default class JserKeyboardEvent {
         this.__onKeypressHandler__ = onKeypressHandler;
         this.__onKeypressListener__ = this.__onKeypress__.bind(this);
         this.__onKeydownListener__ = this.__onKeydown__.bind(this);
-        
+
         this.__setupEvents__();
     }
     

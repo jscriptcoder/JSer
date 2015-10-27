@@ -1,11 +1,11 @@
 /// <reference path="jser.d.ts" />
 
-import Element from './element';
 import * as utils from './utils';
 import * as tmpl from './templates';
 
-import JserOutput from './output';
-import JserPrompt from './prompt';
+import Element from './element';
+import Output from './output';
+import Prompt from './prompt';
 
 const DEFAULT_CONFIG: JSerConfig = {
     backgroundColor: 'white',
@@ -27,7 +27,6 @@ export default class JSer extends Element {
     private __prompt__: JserPrompt;
     
     constructor(el: HTMLElement, api: JSerAPI, config?: JSerConfig) {
-        
         super(el);
         
         this.__uid__ = utils.uid();
@@ -41,7 +40,7 @@ export default class JSer extends Element {
     
     private __generateStyles__() {
         
-        let stylesTmpl = utils.compileTmpl(tmpl.JSER_STYLES, {
+        let stylesTmpl = utils.compileTmpl(tmpl.JSER_STYLES_TMPL, {
             'uid': this.__uid__.toString(),
             'font-family': this.__config__.fontFamily,
             'font-color': this.__config__.fontColor,
@@ -53,14 +52,14 @@ export default class JSer extends Element {
     }
     
     private __init__() {
-        this.__el__.classList.add(`jser_${this.__uid__}`);
-        this.__el__.innerHTML = tmpl.JSER_TMPL;
+        this.addClass(`jser_${this.__uid__}`);
+        this.html = tmpl.JSER_TMPL;
         
-        let output = <HTMLElement>this.__el__.querySelector('.jser-output');
-        let prompt = <HTMLElement>this.__el__.querySelector('.jser-prompt-input');
+        let output = this.find('.jser-output');
+        let prompt = this.find('.jser-prompt-input');
         
-        this.__output__ = new JserOutput(output);
-        this.__prompt__ = new JserPrompt(prompt, this.__config__.promptSymbol);
+        this.__output__ = new Output(output);
+        this.__prompt__ = new Prompt(prompt, this.__config__.promptSymbol);
     }
     
     public destroy() {
