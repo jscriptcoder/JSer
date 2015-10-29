@@ -45,3 +45,15 @@ export function repeatStr(length: number, msg: string): string {
 export function toChar(code: number): string {
     return String.fromCharCode(code);
 }
+
+export function htmlEncode(raw: string): string {
+    var tmp = createElement();
+    tmp.textContent = raw;
+    return tmp.innerHTML.replace(/\s/g, '&nbsp;');
+}
+
+export function htmlDecode(html: string): string {
+    var tmp = createElement();
+    tmp.innerHTML = html;
+    return tmp.textContent;
+}

@@ -13,7 +13,7 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
     46: 'del'
 };
 
-export default class KeyboardHandler {
+export default class KeyboardHook {
     
     private __target__: HTMLElement;
     private __onKeypressHandler__: Function;

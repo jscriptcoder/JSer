@@ -91,7 +91,7 @@ export const JSER_TMPL: string = `
     <div class="jser-wrapper">
         <div class="jser-output"></div>
         <div class="jser-prompt">
-            <span class="jser-prompt-symbol"></span>
+            <span class="jser-prompt-symbol">$prompt-symbol</span>
             <span class="jser-prompt-input">
                 <span class="jser-prompt-cursor blink">&nbsp;</span>
             </span>

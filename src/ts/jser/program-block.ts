@@ -14,7 +14,6 @@ export default class ProgramBlock {
         this.__lines__ = [];
         this.__brackets__ = [];
         this.__tabs__ = 0;
-        
         this.__strTab__ = repeatStr(tabLength, ' ');
     }
     

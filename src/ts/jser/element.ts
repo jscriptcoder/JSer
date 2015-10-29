@@ -7,7 +7,7 @@ export default class Element {
     }
     
     public find(selector: string): HTMLElement {
-        return this.__el__.querySelector(selector);
+        return <HTMLElement>this.__el__.querySelector(selector);
     }
     
     public addClass(className: string) {
@@ -24,5 +24,13 @@ export default class Element {
     
     public get html(): string {
         return this.__el__.innerHTML;
+    }
+    
+    public set text(textContent: string) {
+        this.__el__.textContent = textContent;
+    }
+    
+    public get text(): string {
+        return this.__el__.textContent;
     }
 }

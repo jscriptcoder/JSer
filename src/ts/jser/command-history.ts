@@ -7,7 +7,6 @@ export default class CommandHistory {
     constructor(limit: number = 50) {
         this.__commands__ = [];
         this.__index__ = -1;
-        
         this.__limit__ = limit;
     }
     

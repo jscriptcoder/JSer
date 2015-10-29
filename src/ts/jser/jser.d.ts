@@ -8,5 +8,6 @@ interface JSerConfig {
     fontSize?: string;
     fontFamily?: string;
     promptSymbol?: string;
+    historyLimit?: number
     tabLength?: number;
 }
