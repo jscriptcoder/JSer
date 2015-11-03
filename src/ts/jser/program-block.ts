@@ -145,9 +145,23 @@ export default class ProgramBlock {
     }
     
     /**
+     * Exposes BEGIN_BLOCK_RE regular expression
+     */
+    public get BEGIN_BLOCK_RE(): RegExp {
+        return BEGIN_BLOCK_RE;
+    }
+    
+    /**
+     * Exposes END_BLOCK_RE regular expression
+     */
+    public get END_BLOCK_RE(): RegExp {
+        return END_BLOCK_RE;
+    }
+    
+    /**
      * Destroys the instance
      */
-    public destroy() {
+    public destroy(): void {
         this.clear();
     }
     

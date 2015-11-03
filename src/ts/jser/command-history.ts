@@ -104,7 +104,7 @@ export default class CommandHistory {
     /**
      * Destroys the object
      */
-    public destroy() {
+    public destroy(): void {
         this.__commands__.length = 0;
     }
     

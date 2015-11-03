@@ -104,9 +104,9 @@ export default class Prompt extends ElementWrapper {
     /**
      * Gets called when the user interacts with the keyboard
      */
-    private __onKeypressHandler__(type: string, key: string, extraKeyPressed?: boolean) {
-        if (typeof this[type] === 'function') {
-            this[type](key, extraKeyPressed);
+    private __onKeypressHandler__(action: string, key: string, shift?: boolean): void {
+        if (typeof this[action] === 'function') {
+            this[action](key, shift);
         }
     }
     
@@ -124,7 +124,7 @@ export default class Prompt extends ElementWrapper {
      * Joins the left and right parts to form the new command, 
      * adding the cursor in between
      */
-    private __joinCommandAndInsert__([left, right]: string[]) {
+    private __joinCommandAndInsert__([left, right]: string[]): void {
         this.__command__ = left + right;
         
         this.__input__.innerHTML = utils.htmlEncode(left);
@@ -135,14 +135,14 @@ export default class Prompt extends ElementWrapper {
     /**
      * Removes the cursor from the input
      */
-    private __removeCursor__() {
+    private __removeCursor__(): void {
         this.__input__.innerHTML = utils.htmlEncode(this.__command__);
     }
     
     /**
      * Prepares for selection of a single character
      */
-    private __charSelection__() {
+    private __charSelection__(): void {
         if (!this.__isSelection__) {
             this.__isSelection__ = true;
             
@@ -158,7 +158,7 @@ export default class Prompt extends ElementWrapper {
         }
     }
 
-    private __deleteSelection__() {
+    private __deleteSelection__(): void {
         const range = this.__selection__.getRangeAt(0);
         const selected = this.__command__.slice(range.startOffset, range.endOffset);
         
@@ -170,7 +170,7 @@ export default class Prompt extends ElementWrapper {
         this.moveCursorTo(range.startOffset);
     }
     
-    private __deleteChar__(action: string) {
+    private __deleteChar__(action: string): void {
         let [left, right] = this.__getCommandParts__();
         const part = action === 'backspace' ? left : right;
         
@@ -183,7 +183,7 @@ export default class Prompt extends ElementWrapper {
                     this.__cursorPos__--;
                     break;
                     
-                case 'backspace':
+                case 'del':
                     // deletes first char from the right part
                     if (part.length > 1) {
                         right = left + part.substr(2);
@@ -198,6 +198,52 @@ export default class Prompt extends ElementWrapper {
             
         }
         
+    }
+    
+    /**
+     * Selects characters from the left on
+     */
+    private __selectLeftChar__(): boolean {
+        if (this.__cursorPos__ > 0) {
+            
+            this.__charSelection__();
+            this.__selection__.modify('extend', 'backward', 'character');
+            this.__cursorPos__--;
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Selects characters from the left on
+     */
+    private __selectRightChar__(): boolean {
+        if (this.__cursorPos__ < this.__command__.length) {
+            
+            this.__charSelection__();
+            this.__selection__.modify('extend', 'forward', 'character');
+            this.__cursorPos__++;
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Selects a range of characters to the left
+     */
+    private __selectLeftRange__(): void {
+        while(this.__selectLeftRange__());
+    }
+    
+    /**
+     * Selects a range of characters to the right
+     */
+    private __selectRightRange__(): void {
+        while(this.__selectRightChar__());
     }
     
     /**
@@ -223,46 +269,71 @@ export default class Prompt extends ElementWrapper {
         this.__isSelection__ = false;
     }
     
+    private __insertChar__(char: string): void {
+        
+        // if there is selection, delete first
+        if (this.__isSelection__) {
+            this.__deleteSelection__();
+        }
+        
+        let [left, right] = this.__getCommandParts__();
+        
+        // adds a char to the left part
+        left += char;
+        this.__cursorPos__ += char.length;
+        
+        this.__joinCommandAndInsert__([left, right]);
+    }
+    
     /**
      * Moves the cursor forward
      */
-    public moveCursorForward() {
+    public moveCursorForward(): void {
         this.moveCursorTo(this.__cursorPos__ + 1);
     }
     
     /**
      * Moves the cursor backward
      */
-    public moveCursorBackward() {
+    public moveCursorBackward(): void {
         this.moveCursorTo(this.__cursorPos__ - 1);
     }
     
     /**
      * Moves the cursor to the beginning
      */
-    public moveCursorHome() {
+    public moveCursorHome(): void {
         this.moveCursorTo(0);
     }
     
     /**
      * Moves the cursor to the end
      */
-    public moveCursorEnd() {
+    public moveCursorEnd(): void {
         this.moveCursorTo(this.__command__.length);
     }
     
     /**
      * Shows the previous command in the input
      */
-    public showPreviousCommand() {
+    public showPreviousCommand(): void {
         this.__command__ = this.__program__.strTab + this.__history__.previous;
     }
     
     /**
      * Shows the next command in the input
      */
-    public showNextCommand() {
+    public showNextCommand(): void {
         this.__command__ = this.__program__.strTab + this.__history__.next;
+    }
+    
+    public get isCommand(): boolean {
+        return !!this.__command__.match(/^\s*$/);
+    }
+    
+    public clear(): void {
+        this.__command__ = '';
+        this.moveCursorTo(0);
     }
     
     /**
@@ -279,5 +350,73 @@ export default class Prompt extends ElementWrapper {
         this.__history__.destroy();
         this.__program__.destroy();
         this.__keyboard__.destroy();
+    }
+    
+    /********************/
+    /* KEYBOARD ACTIONS */
+    /********************/
+    
+    /**
+     * Sends BACKSPACE or DEL to the input
+     */
+    public delete(action: string): void {
+        if (this.isCommand) {
+            if (this.__isSelection__) {
+                this.__deleteSelection__();
+            } else {
+                this.__deleteChar__(action);
+            }
+        }
+    }
+    
+    /**
+     * Sends a TAB to the input
+     */
+    public tab(num: string): void {
+        while(num--) this.__insertChar__(this.__program__.strTab);
+    }
+    
+    /**
+     * Sends ENTER to the input
+     */
+    public enter(shift: boolean): void {
+        const program = this.__program__;
+        let command = this.__command__.trim();
+        let endProgram: boolean = false;
+        
+        // Warning: strange logic coming up, but magically works
+        
+        // being in a block (having at least one '{')
+        // or opening one, is the same as enter + shift
+        shift = shift || command.match(program.BEGIN_BLOCK_RE) || program.isBlock;
+        
+        // now, if we're closing a block while being in 
+        // the last one, then it's like just pressing enter
+        shift = shift && !(program.isLastBlock && !command.match(program.END_BLOCK_RE));
+        
+        // ends the program if shift wasn't pressed
+        if (!shift && program.is) {
+            program.addLine(command);
+            command = program.get();
+            program.clear();
+            endProgram = true;
+        }
+        
+        this.__history__.add(command);
+        
+        (!shift && this.__onCommand__(command));
+
+        this.clear();
+        
+        if (shift) {
+            program.addLine(command);
+            
+            // hides the symbol at the beginning of a program
+            if (program.numLines === 1) {
+                this.__symbol__.innerHTML = utils.
+            }
+        }
+        
+        (endProgram && this.__symbol__.innerHTML = 'TODO')
     }
 }

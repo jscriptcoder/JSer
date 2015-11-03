@@ -80,7 +80,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Attaches some event handlers (click, focus and blur)
      */
-    private __addEventListeners__() {
+    private __addEventListeners__(): void {
         this.__onClickListener__ = this.__onClick__.bind(this);
         this.__onFocusListener__ = this.__onFocus__.bind(this);
         this.__onBlurListener__ = this.__onBlur__.bind(this);
@@ -93,28 +93,28 @@ export default class JSer extends ElementWrapper {
     /**
      * Event handler for click
      */
-    private __onClick__(event: MouseEvent) {
+    private __onClick__(event: MouseEvent: void {
         
     }
     
     /**
      * Event handler for focus
      */
-    private __onFocus__(event: Event) {
+    private __onFocus__(event: Event): void {
         
     }
     
     /**
      * Event handler for blur
      */
-    private __onBlur__(event: Event) {
+    private __onBlur__(event: Event): void {
         
     }
     
     /**
      * Generates and injects styles for the instance
      */
-    private __generateStyles__() {
+    private __generateStyles__(): void {
         
         const stylesTmpl = utils.compileTmpl(tmpl.JSER_STYLES_TMPL, {
             'uid': this.__uid__.toString(),
@@ -131,7 +131,7 @@ export default class JSer extends ElementWrapper {
      * Initializes JSer, attaching template to the DOM
      * and running Output and Prompt logic
      */
-    private __init__() {
+    private __init__(): void {
         this.addClass(`jser_${this.__uid__}`);
         
         this.html = utils.compileTmpl(tmpl.JSER_TMPL, {
@@ -151,7 +151,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Gets trigger when a command has heen entered
      */
-    private __onCommand__(command: string) {
+    private __onCommand__(command: string): void {
         this.__output__.print(this.__prompt__.toString());
         // todo: execute command here
     }
@@ -159,7 +159,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Destroys the instance
      */
-    public destroy() {
+    public destroy(): void {
         this.removeListener('click', this.__onClickListener__);
         this.removeListener('focus', this.__onFocusListener__);
         this.removeListener('blur', this.__onBlurListener__);

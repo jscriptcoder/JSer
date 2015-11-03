@@ -45,7 +45,7 @@ export default class KeyboardHook {
     /**
      * Attaches some event handlers (keypress and keydown)
      */
-    private __addEventListeners__() {
+    private __addEventListeners__(): void {
         this.__onKeypressListener__ = this.__onKeypress__.bind(this);
         this.__onKeydownListener__ = this.__onKeydown__.bind(this);
         
@@ -56,7 +56,7 @@ export default class KeyboardHook {
     /**
      * Gets triggered on keypress
      */
-    private __onKeypress__(event: KeyboardEvent) {
+    private __onKeypress__(event: KeyboardEvent): void {
         event.preventDefault();
         
         if (!event.ctrlKey && !event.altKey) {
@@ -67,7 +67,7 @@ export default class KeyboardHook {
     /**
      * Gets triggered on keydown
      */
-    private __onKeydown__(event: KeyboardEvent) {
+    private __onKeydown__(event: KeyboardEvent): void {
         switch(event.which) {
             case 8: // BACKSPACE
             case 46: // DEL
@@ -106,7 +106,7 @@ export default class KeyboardHook {
     /**
      * Destroys the instance removing event listeners
      */
-    public destroy() {
+    public destroy(): void {
         this.__target__.removeEventListener('keypress', this.__onKeypressListener__);
         this.__target__.removeEventListener('keydown', this.__onKeydownListener__);
     }
