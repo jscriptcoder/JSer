@@ -1,46 +1,118 @@
 import {repeatStr} from './utils';
 
+/**
+ * Matches open bracket
+ */
 const BEGIN_BLOCK_RE = new RegExp('\\{$');
+
+/**
+ * Matches closing bracket
+ */
 const END_BLOCK_RE = new RegExp('\\}$');
 
+/**
+ * Keeps track of lines of program. Used when writing blocks {}
+ * or using shift + enter
+ */
 export default class ProgramBlock {
 
+    /**
+     * List of program lines
+     */
     private __lines__: string[];
+    
+    /**
+     * Keeps track of the current block
+     */
     private __brackets__: boolean[];
+    
+    /**
+     * Keeps track of the current tab
+     */
     private __tabs__: number;
+    
+    /**
+     * Tabs as a string of spaces
+     */
     private __strTab__: string;
     
     constructor(tabLength: number = 4) {
         this.__lines__ = [];
         this.__brackets__ = [];
         this.__tabs__ = 0;
+        
+        // creates a tab with as many spaces as tabLength
         this.__strTab__ = repeatStr(tabLength, ' ');
     }
     
+    /**
+     * Initialises a block
+     */
+    private __beginBlock__(): void {
+        this.__brackets__.push(true);
+        this.__tabs__++;
+    }
+    
+    /**
+     * Ends a block
+     */
+    private __endBlock__(): void {
+        this.__brackets__.pop();
+        this.__tabs__--;
+    }
+    
+    /**
+     * Whether or not we have a program
+     */
     public get is(): boolean {
         return this.__lines__.length > 0;
     }
     
+    /**
+     * Whether or not we are in a block
+     */
     public get isBlock(): boolean {
         return this.__brackets__.length > 0;
     }
     
-    public get numTabs(): number {
+    /**
+     * tabs getter 
+     */
+    public get tabs(): number {
         return this.__tabs__;    
     }
     
-    public get strTabs(): string {
-        return repeatStr(this.__tabs__, this.__strTab__);
+    /**
+     *  strTab getter
+     */
+    public get strTab(): string {
+        return this.__strTab__;
     }
     
+    /**
+     * Returns the number of lines
+     */
     public get numLines(): number {
         return this.__lines__.length;
     }
     
+    /**
+     * Whether or not we are in the last block
+     */
+    public isLastBlock(): boolean {
+        return this.__brackets__.length === 1; 
+    }
+    
+    /**
+     * Returns the program in one line
+     */
     public get(): string {
         return this.__lines__.join('');
     }
     
+    /**
+     * Adds a line to the program
+     */
     public addLine(line: string): void {
         
         // beginning of a block
@@ -55,27 +127,26 @@ export default class ProgramBlock {
             this.__endBlock__();
         }
     }
-    
-    private __beginBlock__(): void {
-        this.__brackets__.push(true);
-        this.__tabs__++;
-    }
-    
-    private __endBlock__(): void {
-        this.__brackets__.pop();
-        this.__tabs__--;
-    }
-    
+        
+    /**
+     * Returns the last line of the program
+     */
     public get lastLine(): string {
         return this.__lines__[this.__lines__.length - 1];
     }
     
+    /**
+     * Clears the program
+     */
     public clear(): void {
         this.__lines__.length = 0;
         this.__brackets__.length = 0;
         this.__tabs__ = 0;
     }
     
+    /**
+     * Destroys the instance
+     */
     public destroy() {
         this.clear();
     }

@@ -1,12 +1,15 @@
 import {createElement} from './utils';
-import Element from './element';
+import ElementWrapper from './element-wrapper';
 
-export default class Output extends Element {
+export default class Output extends ElementWrapper {
     
     constructor(el: HTMLElement) {
         super(el);
     }
     
+    /**
+     * Shows messages in the screen
+     */
     public print(message: string, type?: string): void {
         if (Array.isArray(message)) { // there are more than one line
             for(let msg of message) {
@@ -22,5 +25,10 @@ export default class Output extends Element {
         }
     }
     
-    public destroy() {}
+    /**
+     * Destroys the instance
+     */
+    public destroy() {
+        this.empty();
+    }
 }

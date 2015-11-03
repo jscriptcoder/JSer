@@ -15,25 +15,47 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
 
 export default class KeyboardHook {
     
+    /**
+     * Element target of the keyboard events
+     */
     private __target__: HTMLElement;
+    
+    /**
+     * Event handler for keypress and keydown
+     */
     private __onKeypressHandler__: Function;
+    
+    /**
+     * Event listener for keypress
+     */
     private __onKeypressListener__: EventListener;
+    
+    /**
+     * Event listener for keydown
+     */
     private __onKeydownListener__: EventListener;
     
     constructor(target: HTMLElement, onKeypressHandler: Function) {
         this.__target__ = target;
         this.__onKeypressHandler__ = onKeypressHandler;
-        this.__onKeypressListener__ = this.__onKeypress__.bind(this);
-        this.__onKeydownListener__ = this.__onKeydown__.bind(this);
 
-        this.__setupEvents__();
+        this.__addEventListeners__();
     }
     
-    private __setupEvents__() {
+    /**
+     * Attaches some event handlers (keypress and keydown)
+     */
+    private __addEventListeners__() {
+        this.__onKeypressListener__ = this.__onKeypress__.bind(this);
+        this.__onKeydownListener__ = this.__onKeydown__.bind(this);
+        
         this.__target__.addEventListener('keypress', this.__onKeypressListener__);
         this.__target__.addEventListener('keydown', this.__onKeydownListener__);
     }
     
+    /**
+     * Gets triggered on keypress
+     */
     private __onKeypress__(event: KeyboardEvent) {
         event.preventDefault();
         
@@ -42,6 +64,9 @@ export default class KeyboardHook {
         }
     }
     
+    /**
+     * Gets triggered on keydown
+     */
     private __onKeydown__(event: KeyboardEvent) {
         switch(event.which) {
             case 8: // BACKSPACE
@@ -51,7 +76,7 @@ export default class KeyboardHook {
                 break;
             case 9: // TAB
                 event.preventDefault();
-                this.__onKeypressHandler__('keypress', 'tab');
+                this.__onKeypressHandler__('tab');
                 break;
             case 13: // ENTER
                 event.preventDefault();
@@ -78,6 +103,9 @@ export default class KeyboardHook {
         }
     }
     
+    /**
+     * Destroys the instance removing event listeners
+     */
     public destroy() {
         this.__target__.removeEventListener('keypress', this.__onKeypressListener__);
         this.__target__.removeEventListener('keydown', this.__onKeydownListener__);

@@ -1,3 +1,6 @@
+/**
+ * Custom styles
+ */
 export const JSER_STYLES_TMPL: string = `
     @-webkit-keyframes jser_$uid-blink {
         0%, 100% {
@@ -66,7 +69,9 @@ export const JSER_STYLES_TMPL: string = `
     .jser_$uid .jser-output {}
 
     .jser_$uid .jser-output .result {}
+
     .jser_$uid .jser-output .warning {}
+
     .jser_$uid .jser-output .error {}
 
     .jser_$uid .jser-prompt {}
@@ -87,6 +92,9 @@ export const JSER_STYLES_TMPL: string = `
 
 `;
 
+/**
+ * JSer template
+ */
 export const JSER_TMPL: string = `
     <div class="jser-wrapper">
         <div class="jser-output"></div>
