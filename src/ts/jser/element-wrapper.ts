@@ -64,7 +64,7 @@ export default class ElementWrapper {
     /**
      * Sets the innerHTML
      */
-    public set html(innerHTML: string): void {
+    public set html(innerHTML: string) {
         this.__el__.innerHTML = innerHTML;
     }
     
@@ -78,7 +78,7 @@ export default class ElementWrapper {
     /**
      * Sets the text content
      */
-    public set text(textContent: string): void {
+    public set text(textContent: string) {
         this.__el__.textContent = textContent;
     }
     

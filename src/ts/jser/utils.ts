@@ -36,7 +36,7 @@ export function extend(target: Object, ...sources: Object[]): Object {
 /**
  * Returns a template replacing placeholders with values
  */
-export function compileTmpl(tmpl: string, hashMap: {[idx: string]: string}): string {
+export function compileTemplate(tmpl: string, hashMap: {[idx: string]: string}): string {
     for(let key of Object.keys(hashMap)) {
         tmpl = tmpl.replace(new RegExp(`\\$${key}`, 'g'), hashMap[key]);
     }
@@ -63,7 +63,7 @@ export function createElement(tag: string = 'div'): HTMLElement {
 /**
  * Repeats a string length number of times
  */
-export function repeatStr(length: number, msg: string): string {
+export function repeatString(length: number, msg: string): string {
     return Array(length + 1).join(msg);
 }
 
@@ -96,5 +96,5 @@ export function htmlDecode(html: string): string {
  * Returns non-breaking spaces
  */
 export function nbsp(length: number = 1): string {
-    return repeatStr(length, '&nbsp;');
+    return repeatString(length, '&nbsp;');
 }

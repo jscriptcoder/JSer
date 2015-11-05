@@ -1,4 +1,4 @@
-import {repeatStr} from './utils';
+import {repeatString} from './utils';
 
 /**
  * Matches open bracket
@@ -42,7 +42,7 @@ export default class ProgramBlock {
         this.__tabs__ = 0;
         
         // creates a tab with as many spaces as tabLength
-        this.__strTab__ = repeatStr(tabLength, ' ');
+        this.__strTab__ = repeatString(tabLength, ' ');
     }
     
     /**

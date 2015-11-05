@@ -29,7 +29,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Keeps track of the cursor position
      */
-    private __cursorPos__: number;
+    private __cursorPosition__: number;
     
     /**
      * Element symbol
@@ -81,7 +81,7 @@ export default class Prompt extends ElementWrapper {
         
         this.__isSelection__ = false;
         this.__command__ = '';
-        this.__cursorPos__ = 0; //zero-base
+        this.__cursorPosition__ = 0; //zero-base
         
         this.__symbol__ = this.find('.jser-prompt-symbol');
         this.__input__ = this.find('.jser-prompt-input');
@@ -106,7 +106,7 @@ export default class Prompt extends ElementWrapper {
      */
     private __onKeypressHandler__(action: string, key: string, shift?: boolean): void {
         if (typeof this[action] === 'function') {
-            this[action](key, shift);
+            this[`__${action}__`](key, shift);
         }
     }
     
@@ -115,8 +115,8 @@ export default class Prompt extends ElementWrapper {
      */
     private __getCommandParts__(): string[] {
         return [
-            this.__command__.substring(0, this.__cursorPos__),
-            this.__command__.substr(this.__cursorPos__)
+            this.__command__.substring(0, this.__cursorPosition__),
+            this.__command__.substr(this.__cursorPosition__)
         ];
     }
     
@@ -142,7 +142,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Prepares for selection of a single character
      */
-    private __charSelection__(): void {
+    private __characterSelection__(): void {
         if (!this.__isSelection__) {
             this.__isSelection__ = true;
             
@@ -151,13 +151,16 @@ export default class Prompt extends ElementWrapper {
             
             const commandNode = this.__input__.firstChild;
             
-            this.__range__.setStart(commandNode, this.__cursorPos__);
-            this.__range__.setEnd(commandNode, this.__cursorPos__);
+            this.__range__.setStart(commandNode, this.__cursorPosition__);
+            this.__range__.setEnd(commandNode, this.__cursorPosition__);
             
             this.__selection__.addRange(this.__range__);
         }
     }
 
+    /**
+     * Deletes selected text
+     */
     private __deleteSelection__(): void {
         const range = this.__selection__.getRangeAt(0);
         const selected = this.__command__.slice(range.startOffset, range.endOffset);
@@ -170,7 +173,10 @@ export default class Prompt extends ElementWrapper {
         this.moveCursorTo(range.startOffset);
     }
     
-    private __deleteChar__(action: string): void {
+    /**
+     * Deletes selected character
+     */
+    private __deleteCharacter__(action: string): void {
         let [left, right] = this.__getCommandParts__();
         const part = action === 'backspace' ? left : right;
         
@@ -180,7 +186,7 @@ export default class Prompt extends ElementWrapper {
                 case 'backspace':
                     // deletes last char from the left part
                     left = part.slice(0, -1);
-                    this.__cursorPos__--;
+                    this.__cursorPosition__--;
                     break;
                     
                 case 'del':
@@ -201,14 +207,33 @@ export default class Prompt extends ElementWrapper {
     }
     
     /**
+     * Inserts a new character in the input
+     */
+    private __insertCharacter__(char: string): void {
+        
+        // if there is selection, delete first
+        if (this.__isSelection__) {
+            this.__deleteSelection__();
+        }
+        
+        let [left, right] = this.__getCommandParts__();
+        
+        // adds a char to the left part
+        left += char;
+        this.__cursorPosition__ += char.length;
+        
+        this.__joinCommandAndInsert__([left, right]);
+    }
+    
+    /**
      * Selects characters from the left on
      */
-    private __selectLeftChar__(): boolean {
-        if (this.__cursorPos__ > 0) {
+    public selectLeftCharacter(): boolean {
+        if (this.__cursorPosition__ > 0) {
             
-            this.__charSelection__();
+            this.__characterSelection__();
             this.__selection__.modify('extend', 'backward', 'character');
-            this.__cursorPos__--;
+            this.__cursorPosition__--;
             
             return true;
         } else {
@@ -219,12 +244,12 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects characters from the left on
      */
-    private __selectRightChar__(): boolean {
-        if (this.__cursorPos__ < this.__command__.length) {
+    public selectRightCharacter(): boolean {
+        if (this.__cursorPosition__ < this.__command__.length) {
             
-            this.__charSelection__();
+            this.__characterSelection__();
             this.__selection__.modify('extend', 'forward', 'character');
-            this.__cursorPos__++;
+            this.__cursorPosition__++;
             
             return true;
         } else {
@@ -235,15 +260,15 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects a range of characters to the left
      */
-    private __selectLeftRange__(): void {
-        while(this.__selectLeftRange__());
+    public selectLeftRange(): void {
+        while(this.selectLeftRange());
     }
     
     /**
      * Selects a range of characters to the right
      */
-    private __selectRightRange__(): void {
-        while(this.__selectRightChar__());
+    public selectRightRange(): void {
+        while(this.selectRightCharacter());
     }
     
     /**
@@ -251,11 +276,11 @@ export default class Prompt extends ElementWrapper {
      */
     public moveCursorTo(position: number) {
         if (position < 0) {
-            this.__cursorPos__ = 0;
+            this.__cursorPosition__ = 0;
         } else if (position > this.__command__.length) {
-            this.__cursorPos__ = this.__command__.length;
+            this.__cursorPosition__ = this.__command__.length;
         } else {
-            this.__cursorPos__ = position
+            this.__cursorPosition__ = position
         }
         
         const [left, right] = this.__getCommandParts__();
@@ -269,34 +294,18 @@ export default class Prompt extends ElementWrapper {
         this.__isSelection__ = false;
     }
     
-    private __insertChar__(char: string): void {
-        
-        // if there is selection, delete first
-        if (this.__isSelection__) {
-            this.__deleteSelection__();
-        }
-        
-        let [left, right] = this.__getCommandParts__();
-        
-        // adds a char to the left part
-        left += char;
-        this.__cursorPos__ += char.length;
-        
-        this.__joinCommandAndInsert__([left, right]);
-    }
-    
     /**
      * Moves the cursor forward
      */
     public moveCursorForward(): void {
-        this.moveCursorTo(this.__cursorPos__ + 1);
+        this.moveCursorTo(this.__cursorPosition__ + 1);
     }
     
     /**
      * Moves the cursor backward
      */
     public moveCursorBackward(): void {
-        this.moveCursorTo(this.__cursorPos__ - 1);
+        this.moveCursorTo(this.__cursorPosition__ - 1);
     }
     
     /**
@@ -357,14 +366,14 @@ export default class Prompt extends ElementWrapper {
     /********************/
     
     /**
-     * Sends BACKSPACE or DEL to the input
+     * Sends BACKSPACE/DEL to the input
      */
-    public delete(action: string): void {
+    private __delete__(action: string): void {
         if (this.isCommand) {
             if (this.__isSelection__) {
                 this.__deleteSelection__();
             } else {
-                this.__deleteChar__(action);
+                this.__deleteCharacter__(action);
             }
         }
     }
@@ -372,51 +381,125 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends a TAB to the input
      */
-    public tab(num: string): void {
-        while(num--) this.__insertChar__(this.__program__.strTab);
+    private __tab__(num: number = 1): void {
+        this.__insertCharacter__(utils.repeatString(num, this.__program__.strTab));
     }
     
     /**
      * Sends ENTER to the input
      */
-    public enter(shift: boolean): void {
+    private __enter__(shift: boolean): void {
         const program = this.__program__;
         let command = this.__command__.trim();
-        let endProgram: boolean = false;
-        
-        // Warning: strange logic coming up, but magically works
-        
-        // being in a block (having at least one '{')
-        // or opening one, is the same as enter + shift
-        shift = shift || command.match(program.BEGIN_BLOCK_RE) || program.isBlock;
-        
-        // now, if we're closing a block while being in 
-        // the last one, then it's like just pressing enter
-        shift = shift && !(program.isLastBlock && !command.match(program.END_BLOCK_RE));
-        
-        // ends the program if shift wasn't pressed
-        if (!shift && program.is) {
-            program.addLine(command);
-            command = program.get();
-            program.clear();
-            endProgram = true;
-        }
+        const openingBlock = !!command.match(program.BEGIN_BLOCK_RE);
+        const closingBlock = !!command.match(program.END_BLOCK_RE);
+        let inProgram = false;
         
         this.__history__.add(command);
-        
-        (!shift && this.__onCommand__(command));
-
         this.clear();
         
-        if (shift) {
+        // Warning: tricky logic coming up
+        
+        // if
+        //   1. we've pressed shift or
+        //   2 .we're opening a block or
+        //   3. we're already in a block, then:
+        //     it's program
+        // 
+        inProgram = shift || openingBlock || program.isBlock;
+        
+        // now, if
+        //   1. we're in a program and 
+        //   2. we're not closing a block while being in the last one, then:
+        //     it's still a program
+        inProgram = inProgram && !(program.isLastBlock && closingBlock);
+        
+        // we're in a program and getting out
+        if (program.is && !inProgram) {
             program.addLine(command);
+            command = program.get();
+            program.clear(); // program.is === false
+            
+            // returns the symbol
+            this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];
+        }
+        
+        if (inProgram) {
+            program.addLine(command); // program.is === true
             
             // hides the symbol at the beginning of a program
             if (program.numLines === 1) {
-                this.__symbol__.innerHTML = utils.
+                const symbolLength = this.__symbol__.textContent.length;
+                this.__symbol__.innerHTML = utils.nbsp(symbolLength);
             }
+            
+        } else {
+            // sends the command to be processed
+            this.__onCommand__(command);
+        }
+    }
+    
+    /**
+     * Sends HOME/END to the input
+     */
+    private __jump__(action: string, shift: boolean) {
+        switch(action) {
+            case 'home':
+                if (shift) {
+                    this.selectLeftRange();
+                } else {
+                    this.moveCursorHome();
+                }
+                break;
+            case 'end':
+                if (shift) {
+                    this.selectRightRange();
+                } else {
+                    this.moveCursorEnd();
+                }
+                break;
+        }
+    }
+    
+    /**
+     * Sends arrows to the input
+     */
+    private __arrow__(action: string, shift: boolean) {
+        switch(action) {
+                
+            case 'up': this.showPreviousCommand(); break;
+            case 'down': this.showNextCommand(); break;
+                
+            case 'left':
+                if (shift) {
+                    this.selectRightCharacter();
+                } else {
+                    this.moveCursorBackward();
+                }
+                break;
+            
+            case 'right':
+                if (shift) {
+                    this.selectRightCharacter();
+                } else {
+                    this.moveCursorForward();
+                }
+        }
+    }
+    
+    /**
+     * Sends a character to the input
+     */
+    private __char__(char: string) {
+        if (this.__program__.isBlock && !this.isCommand && char === '}') {
+            
+            // we're in a block and closing with a single bracket
+            // Let's move the cursor one tab back
+            this.clear();
+            this.__tab__(this.__program__.tabs - 1);
         }
         
-        (endProgram && this.__symbol__.innerHTML = 'TODO')
+        this.__insertCharacter__(char);
     }
+    
 }

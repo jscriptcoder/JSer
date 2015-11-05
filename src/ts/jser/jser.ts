@@ -74,7 +74,7 @@ export default class JSer extends ElementWrapper {
         
         this.__addEventListeners__();
         this.__generateStyles__();
-        this.__init__();
+        this.__initialize__();
     }
     
     /**
@@ -93,7 +93,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Event handler for click
      */
-    private __onClick__(event: MouseEvent: void {
+    private __onClick__(event: MouseEvent): void {
         
     }
     
@@ -116,7 +116,7 @@ export default class JSer extends ElementWrapper {
      */
     private __generateStyles__(): void {
         
-        const stylesTmpl = utils.compileTmpl(tmpl.JSER_STYLES_TMPL, {
+        const stylesTmpl = utils.compileTemplate(tmpl.JSER_STYLES_TMPL, {
             'uid': this.__uid__.toString(),
             'font-family': this.__config__.fontFamily,
             'font-color': this.__config__.fontColor,
@@ -131,10 +131,10 @@ export default class JSer extends ElementWrapper {
      * Initializes JSer, attaching template to the DOM
      * and running Output and Prompt logic
      */
-    private __init__(): void {
+    private __initialize__(): void {
         this.addClass(`jser_${this.__uid__}`);
         
-        this.html = utils.compileTmpl(tmpl.JSER_TMPL, {
+        this.html = utils.compileTemplate(tmpl.JSER_TMPL, {
             'prompt-symbol': this.__config__.promptSymbol
         });
 
