@@ -16,9 +16,9 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
 export default class KeyboardHook {
     
     /**
-     * Element target of the keyboard events
+     * Indicates whether or not to capture the keyboard events
      */
-    private __target__: HTMLElement;
+    private __capture__: boolean;
     
     /**
      * Event handler for keypress and keydown
@@ -31,14 +31,28 @@ export default class KeyboardHook {
     private __onKeypressListener__: EventListener;
     
     /**
+     * onClick listener
+     */
+    private __onClickListener__: EventListener;
+    
+    /**
+     * onFocus listener
+     */
+    private __onFocusListener__: EventListener;
+    
+    /**
+     * onBlur listener
+     */
+    private __onBlurListener__: EventListener;
+    
+    /**
      * Event listener for keydown
      */
     private __onKeydownListener__: EventListener;
     
     constructor(target: HTMLElement, onKeypressHandler: Function) {
-        this.__target__ = target;
+        this.__capture__ = true;
         this.__onKeypressHandler__ = onKeypressHandler;
-
         this.__addEventListeners__();
     }
     
@@ -49,14 +63,16 @@ export default class KeyboardHook {
         this.__onKeypressListener__ = this.__onKeypress__.bind(this);
         this.__onKeydownListener__ = this.__onKeydown__.bind(this);
         
-        this.__target__.addEventListener('keypress', this.__onKeypressListener__);
-        this.__target__.addEventListener('keydown', this.__onKeydownListener__);
+        document.addEventListener('keypress', this.__onKeypressListener__);
+        document.addEventListener('keydown', this.__onKeydownListener__);
     }
     
     /**
      * Gets triggered on keypress
      */
     private __onKeypress__(event: KeyboardEvent): void {
+        if (!this.__capture__) return;
+        
         event.preventDefault();
         
         if (!event.ctrlKey && !event.altKey) {
@@ -68,6 +84,8 @@ export default class KeyboardHook {
      * Gets triggered on keydown
      */
     private __onKeydown__(event: KeyboardEvent): void {
+        if (!this.__capture__) return;
+        
         switch(event.which) {
             case 8: // BACKSPACE
             case 46: // DEL
@@ -103,12 +121,16 @@ export default class KeyboardHook {
         }
     }
     
+    public set capture(capture: boolean) {
+        this.__capture__ = capture;
+    }
+    
     /**
      * Destroys the instance removing event listeners
      */
     public destroy(): void {
-        this.__target__.removeEventListener('keypress', this.__onKeypressListener__);
-        this.__target__.removeEventListener('keydown', this.__onKeydownListener__);
+        document.removeEventListener('keypress', this.__onKeypressListener__);
+        document.removeEventListener('keydown', this.__onKeydownListener__);
     }
     
 }

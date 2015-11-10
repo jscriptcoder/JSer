@@ -4,6 +4,7 @@ import * as utils from './utils';
 import * as tmpl from './templates';
 
 import ElementWrapper from './element-wrapper';
+import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
 
@@ -17,7 +18,8 @@ const DEFAULT_CONFIG: JSerConfig = {
     fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
     promptSymbol: 'jser>',
     historyLimit: 50,
-    tabLength: 4
+    tabLength: 4,
+    active: true
 };
 
 /**
@@ -41,19 +43,9 @@ export default class JSer extends ElementWrapper {
     private __config__: JSerConfig;
     
     /**
-     * onClick listener
+     * Indicates whether or not jser has the focus
      */
-    private __onClickListener__: EventListener;
-    
-    /**
-     * onFocus listener
-     */
-    private __onFocusListener__: EventListener;
-    
-    /**
-     * onBlur listener
-     */
-    private __onBlurListener__: EventListener;
+    private __active__: boolean;
     
     /**
      * @see Output
@@ -65,6 +57,11 @@ export default class JSer extends ElementWrapper {
      */
     private __prompt__: Prompt;
     
+    /**
+     * @see FocusHook
+     */
+    private __click__: ClickHook;
+    
     constructor(el: HTMLElement, api: JSerAPI, config?: JSerConfig) {
         super(el);
         
@@ -72,43 +69,8 @@ export default class JSer extends ElementWrapper {
         this.__api__ = api;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
-        this.__addEventListeners__();
         this.__generateStyles__();
         this.__initialize__();
-    }
-    
-    /**
-     * Attaches some event handlers (click, focus and blur)
-     */
-    private __addEventListeners__(): void {
-        this.__onClickListener__ = this.__onClick__.bind(this);
-        this.__onFocusListener__ = this.__onFocus__.bind(this);
-        this.__onBlurListener__ = this.__onBlur__.bind(this);
-        
-        this.addListener('click', this.__onClickListener__);
-        this.addListener('focus', this.__onFocusListener__);
-        this.addListener('blur', this.__onBlurListener__);
-    }
-    
-    /**
-     * Event handler for click
-     */
-    private __onClick__(event: MouseEvent): void {
-        
-    }
-    
-    /**
-     * Event handler for focus
-     */
-    private __onFocus__(event: Event): void {
-        
-    }
-    
-    /**
-     * Event handler for blur
-     */
-    private __onBlur__(event: Event): void {
-        
     }
     
     /**
@@ -138,14 +100,32 @@ export default class JSer extends ElementWrapper {
             'prompt-symbol': this.__config__.promptSymbol
         });
 
+        this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
+        
         this.__output__ = new Output(this.find('.jser-output'));
         
-        this.__prompt__ = new Prompt(this.find('.jser-prompt-input'), {
+        this.__prompt__ = new Prompt(this.find('.jser-prompt'), {
             historyLimit: this.__config__.historyLimit,
             tabLength: this.__config__.tabLength,
             onCommand: this.__onCommand__.bind(this),
             keyboardTarget: this.__el__
         });
+        
+        this.__prompt__.active = this.__config__.active;
+    }
+    
+    /**
+     * Gets called when the user clicks on the page
+     */
+    private __clickHandler__(action: string) {
+        switch(action) {
+            case 'focus': 
+                this.__prompt__.active = true;
+                break;
+            case 'blur':
+                this.__prompt__.active = false;
+                break;
+        }
     }
     
     /**
@@ -160,10 +140,7 @@ export default class JSer extends ElementWrapper {
      * Destroys the instance
      */
     public destroy(): void {
-        this.removeListener('click', this.__onClickListener__);
-        this.removeListener('focus', this.__onFocusListener__);
-        this.removeListener('blur', this.__onBlurListener__);
-        
+        this.__click__.destroy();
         this.__output__.destroy();
         this.__prompt__.destroy();
     }

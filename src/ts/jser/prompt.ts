@@ -105,8 +105,9 @@ export default class Prompt extends ElementWrapper {
      * Gets called when the user interacts with the keyboard
      */
     private __onKeypressHandler__(action: string, key: string, shift?: boolean): void {
-        if (typeof this[action] === 'function') {
-            this[`__${action}__`](key, shift);
+        const method = `__${action}__`
+        if (typeof this[method] === 'function') {
+            this[method](key, shift);
         }
     }
     
@@ -125,11 +126,20 @@ export default class Prompt extends ElementWrapper {
      * adding the cursor in between
      */
     private __joinCommandAndInsert__([left, right]: string[]): void {
+        const cursorInnerHTML = this.__cursor__.innerHTML;
+        
         this.__command__ = left + right;
         
-        this.__input__.innerHTML = utils.htmlEncode(left);
-        this.__input__.appendChild(this.__cursor__);
-        this.__input__.innerHTML += utils.htmlEncode(right.substr(1));
+        // Stupid IE empties this cursor element when 
+        // we set the input to an empty string
+        this.__input__.innerHTML = '';
+        this.__cursor__.innerHTML = cursorInnerHTML;
+        
+        this.__input__.appendChild(utils.createFragment(...[
+            utils.createText(left),
+            this.__cursor__,
+            utils.createText(right.substr(1))
+        ]));
     }
     
     /**
@@ -140,9 +150,9 @@ export default class Prompt extends ElementWrapper {
     }
     
     /**
-     * Prepares for selection of a single character
+     * Prepares a selection range
      */
-    private __characterSelection__(): void {
+    private __prepareSelectionRange__(): void {
         if (!this.__isSelection__) {
             this.__isSelection__ = true;
             
@@ -153,8 +163,6 @@ export default class Prompt extends ElementWrapper {
             
             this.__range__.setStart(commandNode, this.__cursorPosition__);
             this.__range__.setEnd(commandNode, this.__cursorPosition__);
-            
-            this.__selection__.addRange(this.__range__);
         }
     }
 
@@ -195,7 +203,7 @@ export default class Prompt extends ElementWrapper {
                         right = left + part.substr(2);
                     } else {
                         right = '';
-                        this.__cursor__.innerHTML = utils.nbsp();
+                        this.__cursor__.innerHTML = utils.space();
                     }
                     break;
             }
@@ -228,32 +236,26 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects characters from the left on
      */
-    public selectLeftCharacter(): boolean {
+    public selectLeftCharacter(): void {
         if (this.__cursorPosition__ > 0) {
             
-            this.__characterSelection__();
-            this.__selection__.modify('extend', 'backward', 'character');
-            this.__cursorPosition__--;
+            this.__prepareSelectionRange__();
             
-            return true;
-        } else {
-            return false;
+            this.__range__.setStart(this.__input__.firstChild, --this.__cursorPosition__);
+            this.__selection__.addRange(this.__range__);
         }
     }
     
     /**
      * Selects characters from the left on
      */
-    public selectRightCharacter(): boolean {
+    public selectRightCharacter(): void {
         if (this.__cursorPosition__ < this.__command__.length) {
             
-            this.__characterSelection__();
-            this.__selection__.modify('extend', 'forward', 'character');
-            this.__cursorPosition__++;
-            
-            return true;
-        } else {
-            return false;
+            this.__prepareSelectionRange__();
+
+            this.__range__.setEnd(this.__input__.firstChild, ++this.__cursorPosition__);
+            this.__selection__.addRange(this.__range__);
         }
     }
     
@@ -261,14 +263,32 @@ export default class Prompt extends ElementWrapper {
      * Selects a range of characters to the left
      */
     public selectLeftRange(): void {
-        while(this.selectLeftRange());
+        if (this.__cursorPosition__ > 0) {
+            
+            this.__prepareSelectionRange__();
+            
+            this.__range__.setStart(
+                            this.__input__.firstChild, 
+                            this.__cursorPosition__ = 0);
+            
+            this.__selection__.addRange(this.__range__);
+        }
     }
     
     /**
      * Selects a range of characters to the right
      */
     public selectRightRange(): void {
-        while(this.selectRightCharacter());
+        if (this.__cursorPosition__ < this.__command__.length) {
+            
+            this.__prepareSelectionRange__();
+
+            this.__range__.setEnd(
+                            this.__input__.firstChild, 
+                            this.__cursorPosition__ = this.__command__.length);
+            
+            this.__selection__.addRange(this.__range__);
+        }
     }
     
     /**
@@ -286,7 +306,7 @@ export default class Prompt extends ElementWrapper {
         const [left, right] = this.__getCommandParts__();
         const curChar = right.charAt(0);
         
-        this.__cursor__.innerHTML = curChar ? utils.htmlEncode(curChar) : utils.nbsp();
+        this.__cursor__.innerHTML = curChar ? utils.htmlEncode(curChar) : utils.space();
         
         this.__joinCommandAndInsert__([left, right]);
         
@@ -337,7 +357,7 @@ export default class Prompt extends ElementWrapper {
     }
     
     public get isCommand(): boolean {
-        return !!this.__command__.match(/^\s*$/);
+        return !this.__command__.match(/^\s*$/);
     }
     
     public clear(): void {
@@ -349,7 +369,23 @@ export default class Prompt extends ElementWrapper {
      * Overrides toString method, returning the text content
      */
     public toString(): string {
-        return this.text;
+        return this.text.trim();
+    }
+    
+    /**
+     * Activates or not the prompt
+     */
+    public set active(is: boolean) {
+        if (is) {
+            // activates the prompt
+            this.__cursor__.classList.add('blink'); // cursor blinking
+            this.__keyboard__.capture = true; // keyboard events
+        } else {
+            // deactivates the prompt
+            this.__cursor__.classList.remove('blink'); // no cursor blinking
+            this.__keyboard__.capture = false; // no keyboard events
+        }
+        
     }
     
     /**
@@ -389,14 +425,11 @@ export default class Prompt extends ElementWrapper {
      * Sends ENTER to the input
      */
     private __enter__(shift: boolean): void {
-        const program = this.__program__;
         let command = this.__command__.trim();
+        let inProgram = false;
+        const program = this.__program__;
         const openingBlock = !!command.match(program.BEGIN_BLOCK_RE);
         const closingBlock = !!command.match(program.END_BLOCK_RE);
-        let inProgram = false;
-        
-        this.__history__.add(command);
-        this.clear();
         
         // Warning: tricky logic coming up
         
@@ -418,25 +451,28 @@ export default class Prompt extends ElementWrapper {
         if (program.is && !inProgram) {
             program.addLine(command);
             command = program.get();
-            program.clear(); // program.is === false
+            program.clear(); // program.is => false
             
             // returns the symbol
             this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];
         }
         
         if (inProgram) {
-            program.addLine(command); // program.is === true
+            program.addLine(command); // program.is => true
             
             // hides the symbol at the beginning of a program
             if (program.numLines === 1) {
                 const symbolLength = this.__symbol__.textContent.length;
-                this.__symbol__.innerHTML = utils.nbsp(symbolLength);
+                this.__symbol__.innerHTML = utils.space(symbolLength);
             }
             
         } else {
             // sends the command to be processed
             this.__onCommand__(command);
         }
+        
+        this.__history__.add(command);
+        this.clear();
     }
     
     /**
@@ -472,7 +508,7 @@ export default class Prompt extends ElementWrapper {
                 
             case 'left':
                 if (shift) {
-                    this.selectRightCharacter();
+                    this.selectLeftCharacter();
                 } else {
                     this.moveCursorBackward();
                 }
@@ -500,6 +536,14 @@ export default class Prompt extends ElementWrapper {
         }
         
         this.__insertCharacter__(char);
+    }
+    
+    private __focus__() {
+        console.log('focus');
+    }
+    
+    private __blur__() {
+        console.log('blur1');
     }
     
 }

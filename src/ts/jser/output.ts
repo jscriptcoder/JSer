@@ -10,17 +10,15 @@ export default class Output extends ElementWrapper {
     /**
      * Shows messages in the screen
      */
-    public print(message: string, type?: string): void {
+    public print(message: string | string[], type: string = 'default'): void {
         if (Array.isArray(message)) { // there are more than one line
             for(let msg of message) {
                 this.print(msg, type);
             }
         } else {
             let div: HTMLElement = createElement();
+            div.className = type;
             div.innerHTML = message;
-
-            if (typeof type === 'string') div.className = type;
-
             this.__el__.appendChild(div);
         }
     }

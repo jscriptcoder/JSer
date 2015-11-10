@@ -1,12 +1,22 @@
 /**
  * Shortcut for document
  */
-const doc = document;
+const doc: Document = document;
 
 /**
  * Shortcut for head
  */
-const head = doc.getElementsByTagName('head')[0];
+const head: HTMLElement = doc.getElementsByTagName('head')[0];
+
+/**
+ * Matches spaces
+ */
+const SPACE_RE: RegExp = new RegExp('\\s', 'g');
+
+/**
+ * Unicode space
+ */
+const USPACE: string = '\u00A0';
 
 /**
  * Returns a unique ID
@@ -80,7 +90,7 @@ export function toChar(code: number): string {
 export function htmlEncode(raw: string): string {
     let tmp = createElement();
     tmp.textContent = raw;
-    return tmp.innerHTML.replace(/\s/g, '&nbsp;');
+    return tmp.innerHTML.replace(SPACE_RE, USPACE);
 }
 
 /**
@@ -95,6 +105,33 @@ export function htmlDecode(html: string): string {
 /**
  * Returns non-breaking spaces
  */
-export function nbsp(length: number = 1): string {
-    return repeatString(length, '&nbsp;');
+export function space(length: number = 1): string {
+    return repeatString(length, USPACE);
+}
+
+/**
+ * Returns a Text node
+ */
+export function createText(text: string): Text {
+    return doc.createTextNode(text.replace(SPACE_RE, USPACE));
+}
+
+/**
+ * Creates a fragment with optional nodes
+ */
+export function createFragment(...nodes: Node[]): DocumentFragment {
+    let fragment = doc.createDocumentFragment();
+    
+    for (let node of nodes) {
+        fragment.appendChild(node);
+    }
+    
+    return fragment;
+}
+
+/**
+ * Defers functions to the next tick (event loop)
+ */
+export function defer(callback: Function) {
+    setTimeout(callback);
 }

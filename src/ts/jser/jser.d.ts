@@ -10,4 +10,5 @@ interface JSerConfig {
     promptSymbol?: string;
     historyLimit?: number
     tabLength?: number;
+    active?: boolean;
 }
