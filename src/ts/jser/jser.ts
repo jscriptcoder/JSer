@@ -107,7 +107,7 @@ export default class JSer extends ElementWrapper {
         this.__prompt__ = new Prompt(this.find('.jser-prompt'), {
             historyLimit: this.__config__.historyLimit,
             tabLength: this.__config__.tabLength,
-            onCommand: this.__onCommand__.bind(this),
+            onEnter: this.__onEnter__.bind(this),
             keyboardTarget: this.__el__
         });
         
@@ -131,9 +131,12 @@ export default class JSer extends ElementWrapper {
     /**
      * Gets trigger when a command has heen entered
      */
-    private __onCommand__(command: string): void {
+    private __onEnter__(command: string, execute: boolean): void {
         this.__output__.print(this.__prompt__.toString());
-        // todo: execute command here
+        if (execute) {
+            // todo: execute command here  
+        }
+        this.__prompt__.scrollIntoView();
     }
     
     /**

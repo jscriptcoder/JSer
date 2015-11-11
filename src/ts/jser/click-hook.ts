@@ -39,7 +39,6 @@ export default class ClickHook {
     private __addEventListeners__(): void {
         this.__onClickListener__ = this.__onClick__.bind(this);
         this.__onDocumentClickListener__ = this.__onDocumentClick__.bind(this);
-        //this.__onWindowFocusListener__ = this.__onWindowFocus__.bind(this);
         this.__onWindowBlurListener__ = this.__onWindowBlur__.bind(this);
         
         this.__target__.addEventListener('click', this.__onClickListener__);
@@ -52,7 +51,7 @@ export default class ClickHook {
      */
     private __onClick__(e: MouseEvent) {
         
-        // if this is triggered it means we're gaining the focus but 
+        // if this is triggered we're getting back the focus but 
         // we need to defer to wait for the event bubbling to finish
         defer(() => this.__onClickHandler__('focus'));
     }

@@ -7,7 +7,7 @@ import KeyboardHook from './keyboard-hook';
 interface PromptConfig {
     historyLimit: number;
     tabLength: number;
-    onCommand: Function;
+    onEnter: Function;
     keyboardTarget: HTMLElement;
 }
 
@@ -49,7 +49,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Callback function called when a command is entered
      */
-    private __onCommand__: Function;
+    private __onEnter__: Function;
     
     /**
      * @see Selection {@link https://developer.mozilla.org/en-US/docs/Web/API/Selection}
@@ -87,7 +87,7 @@ export default class Prompt extends ElementWrapper {
         this.__input__ = this.find('.jser-prompt-input');
         this.__cursor__ = this.find('.jser-prompt-cursor');
         
-        this.__onCommand__ = config.onCommand;
+        this.__onEnter__ = config.onEnter;
 
         this.__selection__ = document.getSelection();
         this.__range__ = document.createRange();
@@ -241,8 +241,12 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
             
-            this.__range__.setStart(this.__input__.firstChild, --this.__cursorPosition__);
+            //console.log(this.__range__.startOffset, this.__range__.endOffset, this.__cursorPosition__);
+            
+            //this.__selection__.removeAllRanges();
+            this.__range__.setStart(this.__input__.firstChild, --this.__range__.startOffset);
             this.__selection__.addRange(this.__range__);
+            this.__cursorPosition__--;
         }
     }
     
@@ -254,8 +258,12 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
 
-            this.__range__.setEnd(this.__input__.firstChild, ++this.__cursorPosition__);
+            //console.log(this.__range__.startOffset, this.__range__.endOffset, this.__cursorPosition__);
+            
+            //this.__selection__.removeAllRanges();
+            this.__range__.setEnd(this.__input__.firstChild, ++this.__range__.endOffset);
             this.__selection__.addRange(this.__range__);
+            this.__cursorPosition__++;
         }
     }
     
@@ -356,6 +364,9 @@ export default class Prompt extends ElementWrapper {
         this.__command__ = this.__program__.strTab + this.__history__.next;
     }
     
+    /**
+     * Indicates whether or not the command is valid (more than just spaces)
+     */
     public get isCommand(): boolean {
         return !this.__command__.match(/^\s*$/);
     }
@@ -369,7 +380,7 @@ export default class Prompt extends ElementWrapper {
      * Overrides toString method, returning the text content
      */
     public toString(): string {
-        return this.text.trim();
+        return this.text;
     }
     
     /**
@@ -379,11 +390,11 @@ export default class Prompt extends ElementWrapper {
         if (is) {
             // activates the prompt
             this.__cursor__.classList.add('blink'); // cursor blinking
-            this.__keyboard__.capture = true; // keyboard events
+            this.__keyboard__.capture = true; // start capturing keys
         } else {
             // deactivates the prompt
-            this.__cursor__.classList.remove('blink'); // no cursor blinking
-            this.__keyboard__.capture = false; // no keyboard events
+            this.__cursor__.classList.remove('blink'); // stop blinking
+            this.__keyboard__.capture = false; // stop capturing keys
         }
         
     }
@@ -405,7 +416,7 @@ export default class Prompt extends ElementWrapper {
      * Sends BACKSPACE/DEL to the input
      */
     private __delete__(action: string): void {
-        if (this.isCommand) {
+        if (this.__command__ !== '') {
             if (this.__isSelection__) {
                 this.__deleteSelection__();
             } else {
@@ -427,6 +438,7 @@ export default class Prompt extends ElementWrapper {
     private __enter__(shift: boolean): void {
         let command = this.__command__.trim();
         let inProgram = false;
+        let endProgram = false;
         const program = this.__program__;
         const openingBlock = !!command.match(program.BEGIN_BLOCK_RE);
         const closingBlock = !!command.match(program.END_BLOCK_RE);
@@ -452,27 +464,29 @@ export default class Prompt extends ElementWrapper {
             program.addLine(command);
             command = program.get();
             program.clear(); // program.is => false
-            
-            // returns the symbol
-            this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];
+            endProgram = true;
         }
+        
+        this.__onEnter__(command, !inProgram);
+        this.__history__.add(command);
+        this.clear();
         
         if (inProgram) {
             program.addLine(command); // program.is => true
             
             // hides the symbol at the beginning of a program
             if (program.numLines === 1) {
-                const symbolLength = this.__symbol__.textContent.length;
+                const symbolLength = this.__symbol__.textContent.trim().length;
                 this.__symbol__.innerHTML = utils.space(symbolLength);
             }
             
-        } else {
-            // sends the command to be processed
-            this.__onCommand__(command);
+            // sends as many tabs as there are in the previous line
+            if (program.tabs) this.__tab__(program.tabs);
+            
+        } else if (endProgram) {
+            // returns the symbol if a program finished
+            this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];            
         }
-        
-        this.__history__.add(command);
-        this.clear();
     }
     
     /**

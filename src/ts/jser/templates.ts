@@ -60,6 +60,7 @@ export const JSER_STYLES_TMPL: string = `
     .jser_$uid .jser-wrapper {
         width: 100%;
         height: 100%;
+        overflow-y: scroll;
         font-family: $font-family;
         font-size: $font-size;
         background-color: $background-color;

@@ -99,7 +99,7 @@ export default class ProgramBlock {
     /**
      * Whether or not we are in the last block
      */
-    public isLastBlock(): boolean {
+    public get isLastBlock(): boolean {
         return this.__brackets__.length === 1; 
     }
     

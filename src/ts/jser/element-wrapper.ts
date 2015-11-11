@@ -96,4 +96,11 @@ export default class ElementWrapper {
         this.html = '';
     }
     
+    /**
+     * Scrolls the element into the visible area of the browser
+     */
+    public scrollIntoView(): void {
+        this.__el__.scrollIntoView();
+    }
+    
 }

@@ -32,10 +32,8 @@ export const uid: {(): number} = (() => {
 export function extend(target: Object, ...sources: Object[]): Object {
     if (Array.isArray(sources)) {
         for(let source of sources) {
-            if (source) {
-                for (let prop of Object.keys(source)) {
-                    target[prop] = source[prop];
-                }
+            for (let prop of Object.keys(source)) {
+                target[prop] = source[prop];
             }
         }
     }
