@@ -69,11 +69,8 @@ export const JSER_STYLES_TMPL: string = `
 
     .jser_$uid .jser-output {}
 
-    .jser_$uid .jser-output .result {}
-
-    .jser_$uid .jser-output .warning {}
-
-    .jser_$uid .jser-output .error {}
+    .jser_$uid .jser-output .result { color: $result-color; }
+    .jser_$uid .jser-output .error { color: $error-color; }
 
     .jser_$uid .jser-prompt {}
 

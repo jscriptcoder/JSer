@@ -1,7 +1,5 @@
-/// <reference path="../jser/jser.d.ts" />
-
-export default class APITest implements JSerAPI {
+export default class APITest {
     
-    help() {}
+    test() {}
     
 }

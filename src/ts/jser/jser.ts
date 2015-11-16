@@ -1,5 +1,3 @@
-/// <reference path="jser.d.ts" />
-
 import * as utils from './utils';
 import * as tmpl from './templates';
 
@@ -8,14 +6,29 @@ import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
 
+interface JSerConfig {
+    backgroundColor?: string;
+    fontColor?: string;
+    fontSize?: string;
+    fontFamily?: string;
+    resultColor?: string,
+    errorColor?: string,
+    promptSymbol?: string;
+    historyLimit?: number
+    tabLength?: number;
+    active?: boolean;
+}
+
 /**
  * Configuration by default
  */
 const DEFAULT_CONFIG: JSerConfig = {
     backgroundColor: 'black',
-    fontColor: '#44D544',
+    fontColor: '#44d544',
     fontSize: '12px',
     fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
+    resultColor: '#31708f',
+    errorColor: '#a94442',
     promptSymbol: 'jser>',
     historyLimit: 50,
     tabLength: 4,
@@ -38,9 +51,9 @@ export default class JSer extends ElementWrapper {
     private __name__: string;
     
     /**
-     * API for this instance
+     * Instance of an API
      */
-    private __api__: JSerAPI;
+    private __api__: Object;
     
     /**
      * List of configuration items
@@ -67,7 +80,7 @@ export default class JSer extends ElementWrapper {
      */
     private __click__: ClickHook;
     
-    constructor(el: HTMLElement, api: JSerAPI, config?: JSerConfig) {
+    constructor(el: HTMLElement, api: Object, config?: JSerConfig) {
         super(el);
         
         this.__uid__ = utils.uid();
@@ -89,6 +102,8 @@ export default class JSer extends ElementWrapper {
             'font-family': this.__config__.fontFamily,
             'font-color': this.__config__.fontColor,
             'font-size': this.__config__.fontSize,
+            'result-color': this.__config__.resultColor,
+            'error-color': this.__config__.errorColor,
             'background-color': this.__config__.backgroundColor
         });
 
@@ -139,9 +154,30 @@ export default class JSer extends ElementWrapper {
      */
     private __onEnter__(command: string, execute: boolean): void {
         this.__output__.print(this.__prompt__.toString());
+        
         if (execute) {
-            // todo: execute command here  
+            
+            // where the magic happens:
+            let evalResult: string;
+            let apiName = `__${this.__name__}__api__`;
+            let globalEval = window['eval']; // indirect eval call, eval'ing in global scope
+            
+            window[apiName] = this.__api__;
+            
+            try {
+                
+                evalResult = globalEval(`with(${apiName}){${command}}`);
+                if (typeof evalResult !== 'undefined') {
+                    this.__output__.print(evalResult, 'result');
+                }
+                
+            } catch(err) {
+                this.__output__.print(err.toString(), 'error');
+            }
+            
+            delete window[apiName];
         }
+        
         this.__prompt__.scrollIntoView();
     }
     
