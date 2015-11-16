@@ -354,14 +354,16 @@ export default class Prompt extends ElementWrapper {
      * Shows the previous command in the input
      */
     public showPreviousCommand(): void {
-        this.__command__ = this.__program__.strTab + this.__history__.previous;
+        this.__command__ = this.__program__.strTabs + this.__history__.previous;
+        this.moveCursorEnd();
     }
     
     /**
      * Shows the next command in the input
      */
     public showNextCommand(): void {
-        this.__command__ = this.__program__.strTab + this.__history__.next;
+        this.__command__ = this.__program__.strTabs + this.__history__.next;
+        this.moveCursorEnd();
     }
     
     /**

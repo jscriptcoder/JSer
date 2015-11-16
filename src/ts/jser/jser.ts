@@ -33,6 +33,11 @@ export default class JSer extends ElementWrapper {
     private __uid__: number;
     
     /**
+     * Unique name for this widget;
+     */
+    private __name__: string;
+    
+    /**
      * API for this instance
      */
     private __api__: JSerAPI;
@@ -66,6 +71,7 @@ export default class JSer extends ElementWrapper {
         super(el);
         
         this.__uid__ = utils.uid();
+        this.__name__ = `jser_${this.__uid__}`;
         this.__api__ = api;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
@@ -86,7 +92,7 @@ export default class JSer extends ElementWrapper {
             'background-color': this.__config__.backgroundColor
         });
 
-        utils.injectStyles(stylesTmpl);
+        utils.injectStyles(stylesTmpl, this.__name__);
     }
     
     /**
@@ -94,7 +100,7 @@ export default class JSer extends ElementWrapper {
      * and running Output and Prompt logic
      */
     private __initialize__(): void {
-        this.addClass(`jser_${this.__uid__}`);
+        this.addClass(this.__name__);
         
         this.html = utils.compileTemplate(tmpl.JSER_TMPL, {
             'prompt-symbol': this.__config__.promptSymbol

@@ -90,6 +90,13 @@ export default class ProgramBlock {
     }
     
     /**
+     *  returns all the tabs so far
+     */
+    public get strTabs(): string {
+        return repeatString(this.__tabs__, this.__strTab__);
+    }
+    
+    /**
      * Returns the number of lines
      */
     public get numLines(): number {

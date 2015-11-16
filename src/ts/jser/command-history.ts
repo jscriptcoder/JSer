@@ -29,7 +29,7 @@ export default class CommandHistory {
      */
     public get(idx: number = this.__index__): string {
         if (~idx) { // is valid index? (not -1)
-            return this.__commands__[this.__index__];
+            return this.__commands__[this.__index__] || '';
         } else {
             return '';
         }
@@ -99,6 +99,7 @@ export default class CommandHistory {
             this.__commands__.shift();
         }
         
+        this.__index__ = this.__commands__.length;
     }
     
     /**

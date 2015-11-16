@@ -55,9 +55,11 @@ export function compileTemplate(tmpl: string, hashMap: {[idx: string]: string}):
 /**
  * Injects custom styles into the head of the document
  */
-export function injectStyles(styles: string): void {
+export function injectStyles(styles: string, id?: string): void {
     let style = doc.createElement('style');
+    if (id) style.id = id;
     style.innerHTML = styles;
+    
     head.appendChild(style);
 }
 
