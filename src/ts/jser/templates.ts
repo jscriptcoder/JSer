@@ -55,7 +55,7 @@ export const JSER_STYLES_TMPL: string = `
 
     .jser_$uid {}
 
-    .jser_$uid pre {}
+    .jser_$uid pre { margin: 0; }
 
     .jser_$uid .jser-wrapper {
         width: 100%;

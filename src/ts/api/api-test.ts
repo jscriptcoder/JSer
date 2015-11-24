@@ -1,7 +1,7 @@
 export default class APITest {
     
-    test() {
-        alert('This is a test');
+    test(...args) {
+        return `Testing ${args.length ? args.join(', ') : ''}`;
     }
     
 }

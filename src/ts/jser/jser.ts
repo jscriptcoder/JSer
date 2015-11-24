@@ -5,6 +5,7 @@ import ElementWrapper from './element-wrapper';
 import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
+import ApiEval from './api-eval';
 
 interface JSerConfig {
     backgroundColor?: string;
@@ -51,11 +52,6 @@ export default class JSer extends ElementWrapper {
     private __name__: string;
     
     /**
-     * Instance of an API
-     */
-    private __api__: Object;
-    
-    /**
      * List of configuration items
      */
     private __config__: JSerConfig;
@@ -64,6 +60,16 @@ export default class JSer extends ElementWrapper {
      * Indicates whether or not jser has the focus
      */
     private __active__: boolean;
+    
+    /**
+     * @see FocusHook
+     */
+    private __click__: ClickHook;
+    
+    /**
+     * @see ApiEval
+     */
+    private __eval__: ApiEval;
     
     /**
      * @see Output
@@ -75,21 +81,18 @@ export default class JSer extends ElementWrapper {
      */
     private __prompt__: Prompt;
     
-    /**
-     * @see FocusHook
-     */
-    private __click__: ClickHook;
-    
     constructor(el: HTMLElement, api: Object, config?: JSerConfig) {
         super(el);
         
         this.__uid__ = utils.uid();
         this.__name__ = `jser_${this.__uid__}`;
-        this.__api__ = api;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
+        this.__eval__ = new ApiEval(this.__name__, api);
+        this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
+        
         this.__generateStyles__();
-        this.__initialize__();
+        this.__render__();
     }
     
     /**
@@ -111,17 +114,15 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
-     * Initializes JSer, attaching template to the DOM
+     * Renders JSer, attaching template to the DOM
      * and running Output and Prompt logic
      */
-    private __initialize__(): void {
+    private __render__(): void {
         this.addClass(this.__name__);
         
         this.html = utils.compileTemplate(tmpl.JSER_TMPL, {
             'prompt-symbol': this.__config__.promptSymbol
         });
-
-        this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
         
         this.__output__ = new Output(this.find('.jser-output'));
         
@@ -152,30 +153,12 @@ export default class JSer extends ElementWrapper {
     /**
      * Gets trigger when a command has heen entered
      */
-    private __onEnter__(command: string, execute: boolean): void {
+    private __onEnter__(command: string, run: boolean): void {
         this.__output__.print(this.__prompt__.toString());
         
-        if (execute) {
-            
-            // where the magic happens:
-            let evalResult: string;
-            let apiName = `__${this.__name__}__api__`;
-            let globalEval = window['eval']; // indirect eval call, eval'ing in global scope
-            
-            window[apiName] = this.__api__;
-            
-            try {
-                
-                evalResult = globalEval(`with(${apiName}){${command}}`);
-                if (typeof evalResult !== 'undefined') {
-                    this.__output__.print(`<pre>${evalResult}</pre>`, 'result');
-                }
-                
-            } catch(err) {
-                this.__output__.print(err.toString(), 'error');
-            }
-            
-            delete window[apiName];
+        if (command && run) {
+            let [result, type] = this.__eval__.run(command);
+            result && this.__output__.print(result, type);
         }
         
         this.__prompt__.scrollIntoView();
