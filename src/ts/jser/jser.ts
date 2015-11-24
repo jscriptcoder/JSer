@@ -168,7 +168,7 @@ export default class JSer extends ElementWrapper {
                 
                 evalResult = globalEval(`with(${apiName}){${command}}`);
                 if (typeof evalResult !== 'undefined') {
-                    this.__output__.print(evalResult, 'result');
+                    this.__output__.print(`<pre>${evalResult}</pre>`, 'result');
                 }
                 
             } catch(err) {

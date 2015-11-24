@@ -1,5 +1,7 @@
 export default class APITest {
     
-    test() {}
+    test() {
+        alert('This is a test');
+    }
     
 }

@@ -234,6 +234,16 @@ export default class Prompt extends ElementWrapper {
     }
     
     /**
+     * Creates a new range selection for the element
+     */
+    private __newRange__(node: Node, startOffset, endOffset) {
+            this.__selection__.removeAllRanges();
+            this.__range__.setStart(node, startOffset);
+            this.__range__.setEnd(node, endOffset);
+            this.__selection__.addRange(this.__range__);
+    }
+    
+    /**
      * Selects characters from the left on
      */
     public selectLeftCharacter(): void {
@@ -241,11 +251,17 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
             
-            //console.log(this.__range__.startOffset, this.__range__.endOffset, this.__cursorPosition__);
+            let startOffset = this.__range__.startOffset;
+            let endOffset = this.__range__.endOffset;
             
-            //this.__selection__.removeAllRanges();
-            this.__range__.setStart(this.__input__.firstChild, --this.__range__.startOffset);
-            this.__selection__.addRange(this.__range__);
+            if (this.__range__.startOffset < this.__cursorPosition__) {
+                endOffset--; // move the end to the left
+            } else if (this.__range__.startOffset == this.__cursorPosition__) {
+                startOffset--; // move the beginning to the left
+            }
+            
+            this.__newRange__(this.__input__.firstChild, startOffset, endOffset);
+            
             this.__cursorPosition__--;
         }
     }
@@ -258,11 +274,17 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
 
-            //console.log(this.__range__.startOffset, this.__range__.endOffset, this.__cursorPosition__);
+            let startOffset = this.__range__.startOffset;
+            let endOffset = this.__range__.endOffset;
             
-            //this.__selection__.removeAllRanges();
-            this.__range__.setEnd(this.__input__.firstChild, ++this.__range__.endOffset);
-            this.__selection__.addRange(this.__range__);
+            if (this.__range__.endOffset > this.__cursorPosition__) {
+                startOffset++; // move the beginning to the right
+            } else if (this.__range__.endOffset == this.__cursorPosition__) {
+                endOffset++; // move the end to the right
+            }
+            
+            this.__newRange__(this.__input__.firstChild, startOffset, endOffset);
+            
             this.__cursorPosition__++;
         }
     }
@@ -275,11 +297,18 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
             
-            this.__range__.setStart(
-                            this.__input__.firstChild, 
-                            this.__cursorPosition__ = 0);
+            let startOffset = this.__range__.startOffset;
+            let endOffset = this.__range__.endOffset;
             
-            this.__selection__.addRange(this.__range__);
+            if (this.__range__.startOffset < this.__cursorPosition__) {
+                endOffset = startOffset;
+            }
+            
+            this.__newRange__(
+                this.__input__.firstChild, 
+                this.__cursorPosition__ = 0, 
+                endOffset
+            );
         }
     }
     
@@ -291,11 +320,18 @@ export default class Prompt extends ElementWrapper {
             
             this.__prepareSelectionRange__();
 
-            this.__range__.setEnd(
-                            this.__input__.firstChild, 
-                            this.__cursorPosition__ = this.__command__.length);
+            let startOffset = this.__range__.startOffset;
+            let endOffset = this.__range__.endOffset;
             
-            this.__selection__.addRange(this.__range__);
+            if (this.__range__.endOffset > this.__cursorPosition__) {
+                startOffset = endOffset;
+            }
+            
+            this.__newRange__(
+                this.__input__.firstChild, 
+                startOffset, 
+                this.__cursorPosition__ = this.__command__.length
+            );
         }
     }
     

@@ -1,5 +1,3 @@
-/// <reference path="jser/jser.d.ts" />
-
 import JSer from './jser/jser';
 import APITest from './api/api-test';
 
