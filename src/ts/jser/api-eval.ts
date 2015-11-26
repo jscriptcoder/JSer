@@ -1,7 +1,7 @@
 /**
  * Matches function params list
  */
-const FUNC_PARAMS_RE = new RegExp('[a-z0-9_]+', 'gi');
+const FUNC_PARAMS_RE = new RegExp('[a-z0-9_\$]+', 'gi');
 
 export default class ApiEval {
     
@@ -31,7 +31,7 @@ export default class ApiEval {
         // tests whether or not it's a function params command
         let funcParams: string[] = command.match(FUNC_PARAMS_RE);
 
-        if (funcParams) {
+        if (funcParams && typeof this.__api__[funcParams[0]] === 'function') {
             
             let funcName = funcParams.shift(); // function name
             let params = funcParams.map((param) => { // list of parameters
@@ -53,6 +53,8 @@ export default class ApiEval {
             evalResult = globalEval(`with(${this.__apiName__}){${command}}`);
             if (typeof evalResult !== 'undefined') {
                 return [`<pre>${evalResult}</pre>`, 'result'];
+            } else {
+                return [];
             }
             
         } catch(err) {
@@ -61,6 +63,13 @@ export default class ApiEval {
 
         delete window[this.__apiName__];
         
+    }
+    
+    /**
+     * API getter
+     */
+    public get api(): Object {
+        return this.__api__;
     }
     
 }

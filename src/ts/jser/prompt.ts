@@ -409,6 +409,9 @@ export default class Prompt extends ElementWrapper {
         return !this.__command__.match(/^\s*$/);
     }
     
+    /**
+     * Clears the prompt from any command
+     */
     public clear(): void {
         this.__command__ = '';
         this.moveCursorTo(0);

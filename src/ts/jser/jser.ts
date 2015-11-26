@@ -88,7 +88,12 @@ export default class JSer extends ElementWrapper {
         this.__name__ = `jser_${this.__uid__}`;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
-        this.__eval__ = new ApiEval(this.__name__, api);
+        this.__eval__ = new ApiEval(this.__name__, utils.extend(api, {
+            // let's add the commands by default
+            clear: this.__clear__.bind(this),
+            lsc: this.__lsc__.bind(this)
+        }));
+        
         this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
         
         this.__generateStyles__();
@@ -173,4 +178,27 @@ export default class JSer extends ElementWrapper {
         this.__prompt__.destroy();
     }
     
+    /***********************/
+    /* COMMANDS BY DEFAULT */
+    /***********************/
+    
+    /**
+     * Command to clear the screen
+     */
+    private __clear__() {
+        this.__output__.empty();
+        this.__prompt__.clear();
+    }
+    
+    /**
+     * Lists commands availables
+     */
+    private __lsc__() {
+        /*
+        let commands: string[] = [];
+        for(let memberName of Object.keys(this.__eval__.api)) {
+            commands.push(memberName);
+        }
+        */
+    }
 }
