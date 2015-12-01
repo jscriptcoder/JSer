@@ -7,6 +7,8 @@ import Output from './output';
 import Prompt from './prompt';
 import ApiEval from './api-eval';
 
+declare var Promise: any;
+
 interface JSerConfig {
     backgroundColor?: string;
     fontColor?: string;
@@ -164,11 +166,38 @@ export default class JSer extends ElementWrapper {
         this.__output__.print(this.__prompt__.toString());
         
         if (command && run) {
-            let [result, type] = this.__eval__.run(command);
-            result && this.__output__.print(result, type);
+            let [evalResult, type] = this.__eval__.run(command);
+            
+            if (evalResult instanceof Promise) {
+                
+                // TODO: waiting
+                
+                evalResult
+                    .then(this.__promiseThen__.bind(this))
+                    .catch(this.__promiseCatch__.bind(this))
+                ;
+                
+            } else if (evalResult) {
+                this.__output__.print(evalResult, type);    
+            }
+            
         }
         
         this.__prompt__.scrollIntoView();
+    }
+    
+    /**
+     * Callback for "then" promise method
+     */
+    private __promiseThen__(result: any): void {
+        this.__output__.print(result, 'result');
+    }
+
+    /**
+     * Callback for "catch" promise method
+     */
+    private __promiseCatch__(message: string) {
+        this.__output__.print(message, 'error');
     }
     
     /**
@@ -201,10 +230,10 @@ export default class JSer extends ElementWrapper {
         for(let memberName in this.__eval__.api) {
             
             let memberValue = this.__eval__.api[memberName];
-            let memberValueString = memberValue.toString();
+            let memberValueString = memberValue.toString().trim();
             
             if (typeof memberValue === 'function') {
-                // no need to show "function". We replace it with the name of the method
+                // methodName([...args])
                 commands.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
             } else {
                 // property = value

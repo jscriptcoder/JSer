@@ -15,6 +15,8 @@ export default class ApiEval {
      */
     private __api__: Object;
     
+    // TODO: cache methods
+    
     constructor(name: string, api: Object) {
         this.__apiName__ = `__${name}__api__`;
         this.__api__ = api;
@@ -23,7 +25,7 @@ export default class ApiEval {
     /**
      * Runs a command evaluating on the global scope against the API
      */
-    public run(command: string): string[] {
+    public run(command: string): any[] {
         
         let evalResult: string;
         let globalEval = window['eval']; // indirect eval call, eval'ing in global scope
@@ -52,7 +54,7 @@ export default class ApiEval {
             // the magic happens here:
             evalResult = globalEval(`with(${this.__apiName__}){${command}}`);
             if (typeof evalResult !== 'undefined') {
-                return [`<pre>${evalResult}</pre>`, 'result'];
+                return [evalResult, 'result'];
             } else {
                 return [];
             }
