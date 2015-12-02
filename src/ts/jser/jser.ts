@@ -5,7 +5,7 @@ import ElementWrapper from './element-wrapper';
 import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
-import ApiEval from './api-eval';
+import ApiWrapper from './api-wrapper';
 
 declare var Promise: any;
 
@@ -71,9 +71,9 @@ export default class JSer extends ElementWrapper {
     private __click__: ClickHook;
     
     /**
-     * @see ApiEval
+     * @see ApiWrapper
      */
-    private __eval__: ApiEval;
+    private __api__: ApiWrapper;
     
     /**
      * @see Output
@@ -92,7 +92,7 @@ export default class JSer extends ElementWrapper {
         this.__name__ = `jser_${this.__uid__}`;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
-        this.__eval__ = new ApiEval(this.__name__, utils.extend(api, {
+        this.__api__ = new ApiWrapper(this.__name__, utils.extend(api, {
             // let's add the commands by default
             clear: this.__clear__.bind(this),
             lsc: this.__lsc__.bind(this)
@@ -166,7 +166,7 @@ export default class JSer extends ElementWrapper {
         this.__output__.print(this.__prompt__.toString());
         
         if (command && run) {
-            let [evalResult, type] = this.__eval__.run(command);
+            let [evalResult, type] = this.__api__.run(command);
             
             if (evalResult instanceof Promise) {
                 

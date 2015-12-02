@@ -3,7 +3,7 @@
  */
 const FUNC_PARAMS_RE = new RegExp('[a-z0-9_\$]+', 'gi');
 
-export default class ApiEval {
+export default class ApiWrapper {
     
     /**
      * Name used for the global object
