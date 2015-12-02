@@ -170,7 +170,7 @@ export default class JSer extends ElementWrapper {
             
             if (evalResult instanceof Promise) {
                 
-                // TODO: waiting
+                this.__prompt__.spin();
                 
                 evalResult
                     .then(this.__promiseThen__.bind(this))
@@ -191,6 +191,8 @@ export default class JSer extends ElementWrapper {
      */
     private __promiseThen__(result: any): void {
         this.__output__.print(result, 'result');
+        this.__prompt__.blink();
+        this.__prompt__.scrollIntoView();
     }
 
     /**
@@ -198,6 +200,8 @@ export default class JSer extends ElementWrapper {
      */
     private __promiseCatch__(message: string) {
         this.__output__.print(message, 'error');
+        this.__prompt__.blink();
+        this.__prompt__.scrollIntoView();
     }
     
     /**

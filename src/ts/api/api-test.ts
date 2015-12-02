@@ -16,7 +16,7 @@ export default class APITest {
                 } else {
                     resolve(`Testing ${args.length ? args.join(', ') : ''}`);
                 }
-            }, 2000);
+            }, 5000);
         });
     }
     

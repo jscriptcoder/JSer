@@ -440,6 +440,16 @@ export default class Prompt extends ElementWrapper {
         
     }
     
+    public blink() {
+        this.__cursor__.classList.remove('spin');
+        this.__cursor__.classList.add('blink');
+    }
+    
+    public spin() {
+        this.__cursor__.classList.remove('blink');
+        this.__cursor__.classList.add('spin');
+    }
+    
     /**
      * Destroys the instance
      */

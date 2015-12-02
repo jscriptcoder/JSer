@@ -53,6 +53,57 @@ export const JSER_STYLES_TMPL: string = `
         }
     }
 
+    @-webkit-keyframes jser_$uid-spin {
+        12.5% { transform: rotate(45deg); }
+        25%   { transform: rotate(90deg); }
+        37.5% { transform: rotate(135deg); }
+        50%   { transform: rotate(180deg); }
+        62.5% { transform: rotate(225deg); }
+        75%   { transform: rotate(270deg); }
+        87.5% { transform: rotate(315deg); }
+        100%  { transform: rotate(360deg); }
+    }
+    @-moz-keyframes jser_$uid-spin {
+        12.5% { transform: rotate(45deg); }
+        25%   { transform: rotate(90deg); }
+        37.5% { transform: rotate(135deg); }
+        50%   { transform: rotate(180deg); }
+        62.5% { transform: rotate(225deg); }
+        75%   { transform: rotate(270deg); }
+        87.5% { transform: rotate(315deg); }
+        100%  { transform: rotate(360deg); }
+    }
+    @-ms-keyframes jser_$uid-spin {
+        12.5% { transform: rotate(45deg); }
+        25%   { transform: rotate(90deg); }
+        37.5% { transform: rotate(135deg); }
+        50%   { transform: rotate(180deg); }
+        62.5% { transform: rotate(225deg); }
+        75%   { transform: rotate(270deg); }
+        87.5% { transform: rotate(315deg); }
+        100%  { transform: rotate(360deg); }
+    }
+    @-o-keyframes jser_$uid-spin {
+        12.5% { transform: rotate(45deg); }
+        25%   { transform: rotate(90deg); }
+        37.5% { transform: rotate(135deg); }
+        50%   { transform: rotate(180deg); }
+        62.5% { transform: rotate(225deg); }
+        75%   { transform: rotate(270deg); }
+        87.5% { transform: rotate(315deg); }
+        100%  { transform: rotate(360deg); }
+    }
+    @keyframes jser_$uid-spin {
+        12.5% { transform: rotate(45deg); }
+        25%   { transform: rotate(90deg); }
+        37.5% { transform: rotate(135deg); }
+        50%   { transform: rotate(180deg); }
+        62.5% { transform: rotate(225deg); }
+        75%   { transform: rotate(270deg); }
+        87.5% { transform: rotate(315deg); }
+        100%  { transform: rotate(360deg); }
+    }
+
     .jser_$uid {}
 
     .jser_$uid pre { margin: 0; }
@@ -78,7 +129,7 @@ export const JSER_STYLES_TMPL: string = `
 
     .jser_$uid .jser-prompt-input {}
 
-    .jser_$uid .jser-prompt-cursor {}
+    .jser_$uid .jser-prompt-cursor { display: inline-block; }
 
     .jser_$uid .jser-prompt-cursor.blink {
         -webkit-animation: jser_$uid-blink 1s infinite steps(1);
@@ -86,6 +137,17 @@ export const JSER_STYLES_TMPL: string = `
         -ms-animation: jser_$uid-blink 1s infinite steps(1);
         -o-animation: jser_$uid-blink 1s infinite steps(1);
         animation: jser_$uid-blink 1s infinite steps(1);
+    }
+
+    .jser_$uid .jser-prompt-cursor.spin {
+        background-color: $font-color;
+        color: $background-color;
+
+        -webkit-animation: jser_$uid-spin 1s infinite steps(1);
+        -moz-animation: jser_$uid-spin 1s infinite steps(1);
+        -ms-animation: jser_$uid-spin 1s infinite steps(1);
+        -o-animation: jser_$uid-spin 1s infinite steps(1);
+        animation: jser_$uid-spin 1s infinite steps(1);
     }
 
 `;
