@@ -3,6 +3,11 @@
  */
 const FUNC_PARAMS_RE = new RegExp('[a-z0-9_\$]+', 'gi');
 
+/**
+ * Matches function signature
+ */
+const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
+
 export default class ApiWrapper {
     
     /**
@@ -72,6 +77,26 @@ export default class ApiWrapper {
      */
     public get api(): Object {
         return this.__api__;
+    }
+    
+    public get commands(): string[] {
+        let commands: string[] = [];
+        
+        for(let memberName in this.__api__) {
+            
+            let memberValue = this.__api__[memberName];
+            let memberValueString = memberValue.toString().trim();
+            
+            if (typeof memberValue === 'function') {
+                // methodName([...args])
+                commands.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
+            } else {
+                // property = value
+                commands.push(`${memberName} = ${memberValue}`);
+            }
+        }
+        
+        return commands;
     }
     
 }

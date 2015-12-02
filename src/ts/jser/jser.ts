@@ -38,8 +38,6 @@ const DEFAULT_CONFIG: JSerConfig = {
     active: true
 };
 
-const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
-
 /**
  * Shell application for user interaction with custom APIs
  */
@@ -229,22 +227,6 @@ export default class JSer extends ElementWrapper {
      * Lists commands availables
      */
     private __lsc__() {
-        let commands: string[] = [];
-        
-        for(let memberName in this.__eval__.api) {
-            
-            let memberValue = this.__eval__.api[memberName];
-            let memberValueString = memberValue.toString().trim();
-            
-            if (typeof memberValue === 'function') {
-                // methodName([...args])
-                commands.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
-            } else {
-                // property = value
-                commands.push(`${memberName} = ${memberValue}`);
-            }
-        }
-        
-        this.__output__.print(`<pre>/**\n * ${commands.join('\n * ')}\n */</pre>`, 'result');
+        this.__output__.print(`<pre>/**\n * ${this.__api__.commands.join('\n * ')}\n */</pre>`, 'result');
     }
 }
