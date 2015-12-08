@@ -20,11 +20,43 @@ export default class ApiWrapper {
      */
     private __api__: Object;
     
-    // TODO: cache methods
+    /**
+     * List of commands (members' signature) provided by the public API
+     */
+    private __commands__: string[];
     
+    /**
+     * List of members of the API
+     */
+    private __members__: string[];
+
     constructor(name: string, api: Object) {
         this.__apiName__ = `__${name}__api__`;
         this.__api__ = api;
+        this.__cacheCommands__();
+    }
+    
+    /**
+     * Caches the list of commands
+     */
+    private __cacheCommands__() {
+        this.__commands__ = [];
+        this.__members__ = [];
+        
+        for(let memberName in this.__api__) {
+            this.__members__.push(memberName);
+            
+            let memberValue = this.__api__[memberName];
+            let memberValueString = memberValue.toString().trim();
+            
+            if (typeof memberValue === 'function') {
+                // methodName([...args])
+                this.__commands__.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
+            } else {
+                // property = value
+                this.__commands__.push(`${memberName} = ${memberValue}`);
+            }
+        }
     }
     
     /**
@@ -79,24 +111,18 @@ export default class ApiWrapper {
         return this.__api__;
     }
     
+    /**
+     * commands getter
+     */
     public get commands(): string[] {
-        let commands: string[] = [];
-        
-        for(let memberName in this.__api__) {
-            
-            let memberValue = this.__api__[memberName];
-            let memberValueString = memberValue.toString().trim();
-            
-            if (typeof memberValue === 'function') {
-                // methodName([...args])
-                commands.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
-            } else {
-                // property = value
-                commands.push(`${memberName} = ${memberValue}`);
-            }
-        }
-        
-        return commands;
+        return this.__commands__;
+    }
+    
+    /**
+     * members getter
+     */
+    public get members(): string[] {
+        return this.__members__;
     }
     
 }

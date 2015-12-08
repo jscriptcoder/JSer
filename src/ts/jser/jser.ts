@@ -137,6 +137,7 @@ export default class JSer extends ElementWrapper {
             historyLimit: this.__config__.historyLimit,
             tabLength: this.__config__.tabLength,
             onEnter: this.__onEnter__.bind(this),
+            onTab: this.__onTab__.bind(this),
             keyboardTarget: this.__el__
         });
         
@@ -146,7 +147,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Gets called when the user clicks on the page
      */
-    private __clickHandler__(action: string) {
+    private __clickHandler__(action: string): void {
         switch(action) {
             case 'focus': 
                 this.__prompt__.active = true;
@@ -158,7 +159,7 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
-     * Gets trigger when a command has heen entered
+     * Gets triggered when a command (or block) has heen entered
      */
     private __onEnter__(command: string, run: boolean): void {
         this.__output__.print(this.__prompt__.toString());
@@ -185,6 +186,32 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
+     * Gets triggered when tab has been entered to list matching members
+     */
+    private __onTab__(command: string): void {
+        let command_re = new RegExp(`^${command}`, 'i');
+        let matches = this.__api__.members.filter((member: string) => {
+            return !!member.match(command_re);
+        });
+        
+        if (matches.length > 1) {            
+            // shows the possible options
+            this.__lsc__(matches);
+            
+            // autocompletes with the common matching word
+            this.__prompt__.enterCommand(matches.reduce((prev: string, current: string) => {
+                return !!prev.match(current) ? current : prev;
+            }));
+            
+        } else if (matches.length === 1) {
+            // autocomplete
+            this.__prompt__.enterCommand(matches[0]);
+        }
+        
+        this.__prompt__.scrollIntoView();
+    }
+    
+    /**
      * Callback for "then" promise method
      */
     private __promiseThen__(result: any): void {
@@ -196,7 +223,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Callback for "catch" promise method
      */
-    private __promiseCatch__(message: string) {
+    private __promiseCatch__(message: string): void {
         this.__output__.print(message, 'error');
         this.__prompt__.blink();
         this.__prompt__.scrollIntoView();
@@ -218,7 +245,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Command to clear the screen
      */
-    private __clear__() {
+    private __clear__(): void {
         this.__output__.empty();
         this.__prompt__.clear();
     }
@@ -226,7 +253,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Lists commands availables
      */
-    private __lsc__() {
-        this.__output__.print(`<pre>/**\n * ${this.__api__.commands.join('\n * ')}\n */</pre>`, 'result');
+    private __lsc__(commands: string[] = this.__api__.commands): void {
+        this.__output__.print(`<pre>/**\n * ${commands.join('\n * ')}\n */</pre>`, 'result');
     }
 }

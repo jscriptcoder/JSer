@@ -8,8 +8,14 @@ interface PromptConfig {
     historyLimit: number;
     tabLength: number;
     onEnter: Function;
+    onTab: Function;
     keyboardTarget: HTMLElement;
 }
+
+/**
+ * Matches matching members to be listed
+ */
+const MATCHING_MEMBERS_RE = new RegExp('^[a-z0-9_\$]+$', 'i');
 
 /**
  * Takes care of the whole shell prompt logic
@@ -52,6 +58,11 @@ export default class Prompt extends ElementWrapper {
     private __onEnter__: Function;
     
     /**
+     * Callback function called when a tab matching members is entered
+     */
+    private __onTab__: Function;
+    
+    /**
      * @see Selection {@link https://developer.mozilla.org/en-US/docs/Web/API/Selection}
      */
     private __selection__: Selection;
@@ -88,6 +99,7 @@ export default class Prompt extends ElementWrapper {
         this.__cursor__ = this.find('.jser-prompt-cursor');
         
         this.__onEnter__ = config.onEnter;
+        this.__onTab__ = config.onTab;
 
         this.__selection__ = document.getSelection();
         this.__range__ = document.createRange();
@@ -390,15 +402,21 @@ export default class Prompt extends ElementWrapper {
      * Shows the previous command in the input
      */
     public showPreviousCommand(): void {
-        this.__command__ = this.__program__.strTabs + this.__history__.previous;
-        this.moveCursorEnd();
+        this.enterCommand(this.__program__.strTabs + this.__history__.previous);
     }
     
     /**
      * Shows the next command in the input
      */
     public showNextCommand(): void {
-        this.__command__ = this.__program__.strTabs + this.__history__.next;
+        this.enterCommand(this.__program__.strTabs + this.__history__.next)
+    }
+    
+    /**
+     * Enters a command in the input
+     */
+    public enterCommand(command: string): void {
+        this.__command__ = command;
         this.moveCursorEnd();
     }
     
@@ -480,7 +498,11 @@ export default class Prompt extends ElementWrapper {
      * Sends a TAB to the input
      */
     private __tab__(num: number = 1): void {
-        this.__insertCharacter__(utils.repeatString(num, this.__program__.strTab));
+        if (this.__command__.match(MATCHING_MEMBERS_RE) && !this.__program__.is) {
+            this.__onTab__(this.__command__);
+        } else {
+            this.__insertCharacter__(utils.repeatString(num, this.__program__.strTab));   
+        }
     }
     
     /**

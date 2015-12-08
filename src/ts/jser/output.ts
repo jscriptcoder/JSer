@@ -26,7 +26,7 @@ export default class Output extends ElementWrapper {
     /**
      * Destroys the instance
      */
-    public destroy() {
+    public destroy(): void {
         this.empty();
     }
 }
