@@ -49,7 +49,7 @@ export default class ClickHook {
     /**
      * Event handler for click
      */
-    private __onClick__(e: MouseEvent) {
+    private __onClick__(e: MouseEvent): void {
         
         // if this is triggered we're getting back the focus but 
         // we need to defer to wait for the event bubbling to finish
@@ -59,7 +59,7 @@ export default class ClickHook {
     /**
      * Event handler for documentClick
      */
-    private __onDocumentClick__(e: MouseEvent) {
+    private __onDocumentClick__(e: MouseEvent): void {
         // if this is triggered it means we're losing the focus
         this.__onClickHandler__('blur');
     }
@@ -67,7 +67,7 @@ export default class ClickHook {
     /**
      * Event handler for windowBlur
      */
-    private __onWindowBlur__(e: MouseEvent) {
+    private __onWindowBlur__(e: MouseEvent): void {
         this.__onClickHandler__('blur');
     }
     

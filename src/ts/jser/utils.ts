@@ -132,6 +132,6 @@ export function createFragment(...nodes: Node[]): DocumentFragment {
 /**
  * Defers functions to the next tick (event loop)
  */
-export function defer(callback: Function) {
+export function defer(callback: Function): void {
     setTimeout(callback);
 }

@@ -39,7 +39,7 @@ export default class ApiWrapper {
     /**
      * Caches the list of commands
      */
-    private __cacheCommands__() {
+    private __cacheCommands__(): void {
         this.__commands__ = [];
         this.__members__ = [];
         

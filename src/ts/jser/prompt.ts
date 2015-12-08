@@ -350,7 +350,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Moves the cursor to a different position
      */
-    public moveCursorTo(position: number) {
+    public moveCursorTo(position: number): void {
         if (position < 0) {
             this.__cursorPosition__ = 0;
         } else if (position > this.__command__.length) {
@@ -458,12 +458,12 @@ export default class Prompt extends ElementWrapper {
         
     }
     
-    public blink() {
+    public blink(): void {
         this.__cursor__.classList.remove('spin');
         this.__cursor__.classList.add('blink');
     }
     
-    public spin() {
+    public spin(): void {
         this.__cursor__.classList.remove('blink');
         this.__cursor__.classList.add('spin');
     }
@@ -471,7 +471,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Destroys the instance
      */
-    public destroy() {
+    public destroy(): void {
         this.__history__.destroy();
         this.__program__.destroy();
         this.__keyboard__.destroy();
@@ -565,7 +565,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends HOME/END to the input
      */
-    private __jump__(action: string, shift: boolean) {
+    private __jump__(action: string, shift: boolean): void {
         switch(action) {
             case 'home':
                 if (shift) {
@@ -587,7 +587,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends arrows to the input
      */
-    private __arrow__(action: string, shift: boolean) {
+    private __arrow__(action: string, shift: boolean): void {
         switch(action) {
                 
             case 'up': this.showPreviousCommand(); break;
@@ -613,7 +613,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends a character to the input
      */
-    private __char__(char: string) {
+    private __char__(char: string): void {
         if (this.__program__.isBlock && !this.isCommand && char === '}') {
             
             // we're in a block and closing with a single bracket
@@ -623,14 +623,6 @@ export default class Prompt extends ElementWrapper {
         }
         
         this.__insertCharacter__(char);
-    }
-    
-    private __focus__() {
-        console.log('focus');
-    }
-    
-    private __blur__() {
-        console.log('blur1');
     }
     
 }
