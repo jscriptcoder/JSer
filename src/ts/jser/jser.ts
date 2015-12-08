@@ -1,3 +1,5 @@
+/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+
 import * as utils from './utils';
 import * as tmpl from './templates';
 
@@ -6,8 +8,6 @@ import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
 import ApiWrapper from './api-wrapper';
-
-declare var Promise: any;
 
 interface JSerConfig {
     backgroundColor?: string;

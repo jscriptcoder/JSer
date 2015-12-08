@@ -1,4 +1,4 @@
-declare var Promise: any;
+/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 
 export default class APITest {
     
