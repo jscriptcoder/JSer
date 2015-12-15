@@ -11,7 +11,7 @@ const head: HTMLElement = doc.getElementsByTagName('head')[0];
 /**
  * Matches spaces
  */
-const SPACE_RE: RegExp = new RegExp('\\s', 'g');
+const SPACE_RE: RegExp = /\s/g;
 
 /**
  * Unicode space
@@ -32,7 +32,7 @@ export const uid: {(): number} = (() => {
 export function extend(target: Object, ...sources: Object[]): Object {
     if (Array.isArray(sources)) {
         for(let source of sources) {
-            for (let prop of Object.keys(source)) {
+            for (let prop in source) {
                 target[prop] = source[prop];
             }
         }

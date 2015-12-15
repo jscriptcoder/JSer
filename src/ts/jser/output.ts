@@ -16,7 +16,7 @@ export default class Output extends ElementWrapper {
                 this.print(msg, type);
             }
         } else {
-            let div: HTMLElement = createElement();
+            const div: HTMLElement = createElement();
             div.className = type;
             div.innerHTML = message;
             this.__el__.appendChild(div);

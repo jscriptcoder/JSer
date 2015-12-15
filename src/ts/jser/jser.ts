@@ -14,7 +14,8 @@ interface JSerConfig {
     fontColor?: string;
     fontSize?: string;
     fontFamily?: string;
-    resultColor?: string,
+    infoColor?: string,
+    warnColor?: string,
     errorColor?: string,
     promptSymbol?: string;
     historyLimit?: number
@@ -30,7 +31,8 @@ const DEFAULT_CONFIG: JSerConfig = {
     fontColor: '#44d544',
     fontSize: '12px',
     fontFamily: 'Menlo, Monaco, Consolas, "Courier New", monospace',
-    resultColor: '#31708f',
+    infoColor: '#31708f',
+    warnColor: '#f0ad4e',
     errorColor: '#a94442',
     promptSymbol: 'jser>',
     historyLimit: 50,
@@ -42,6 +44,13 @@ const DEFAULT_CONFIG: JSerConfig = {
  * Shell application for user interaction with custom APIs
  */
 export default class JSer extends ElementWrapper {
+    
+    /**
+     * Mixes up multiple objects
+     */
+    public static mixins(...mixins: Object[]) {
+        return utils.extend({}, ...mixins);
+    }
     
     /**
      * Unique ID for the instance
@@ -90,11 +99,7 @@ export default class JSer extends ElementWrapper {
         this.__name__ = `jser_${this.__uid__}`;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
-        this.__api__ = new ApiWrapper(this.__name__, utils.extend(api, {
-            // let's add the commands by default
-            clear: this.__clear__.bind(this),
-            lsc: this.__lsc__.bind(this)
-        }));
+        this.__api__ = new ApiWrapper(this.__name__, utils.extend(api, {__jser__: this}));
         
         this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
         
@@ -112,7 +117,8 @@ export default class JSer extends ElementWrapper {
             'font-family': this.__config__.fontFamily,
             'font-color': this.__config__.fontColor,
             'font-size': this.__config__.fontSize,
-            'result-color': this.__config__.resultColor,
+            'info-color': this.__config__.infoColor,
+            'warn-color': this.__config__.warnColor,
             'error-color': this.__config__.errorColor,
             'background-color': this.__config__.backgroundColor
         });
@@ -162,14 +168,14 @@ export default class JSer extends ElementWrapper {
      * Gets triggered when a command (or block) has heen entered
      */
     private __onEnter__(command: string, run: boolean): void {
-        this.__output__.print(this.__prompt__.toString());
+        this.print(this.__prompt__.toString());
         
         if (command && run) {
             let [evalResult, type] = this.__api__.run(command);
             
             if (evalResult instanceof Promise) {
                 
-                this.__prompt__.spin();
+                this.promptWaiting();
                 
                 evalResult
                     .then(this.__promiseThen__.bind(this))
@@ -177,83 +183,148 @@ export default class JSer extends ElementWrapper {
                 ;
                 
             } else if (evalResult) {
-                this.__output__.print(evalResult, type);    
+                this.print(evalResult, type);    
             }
             
         }
-        
-        this.__prompt__.scrollIntoView();
     }
     
     /**
      * Gets triggered when tab has been entered to list matching members
      */
     private __onTab__(command: string): void {
-        let command_re = new RegExp(`^${command}`, 'i');
-        let matches = this.__api__.members.filter((member: string) => {
+        const command_re = new RegExp(`^${command}`, 'i');
+        const matches = this.__api__.members.filter((member: string) => {
             return !!member.match(command_re);
         });
         
-        if (matches.length > 1) {            
+        if (matches.length > 1) {
             // shows the possible options
-            this.__lsc__(matches);
+            this.infoMessage(`<pre>/**\n * ${matches.join('\n * ')}\n */</pre>`);
             
             // autocompletes with the common matching word
             this.__prompt__.enterCommand(matches.reduce((prev: string, current: string) => {
-                return !!prev.match(current) ? current : prev;
+                let i;
+                for(i = 0; i < prev.length && prev[i] === current[i]; i++);
+                return prev.substr(0, i);
             }));
             
         } else if (matches.length === 1) {
             // autocomplete
             this.__prompt__.enterCommand(matches[0]);
         }
-        
-        this.__prompt__.scrollIntoView();
     }
     
     /**
      * Callback for "then" promise method
      */
     private __promiseThen__(result: any): void {
-        this.__output__.print(result, 'result');
-        this.__prompt__.blink();
-        this.__prompt__.scrollIntoView();
+        this.__afterPromise__(result, 'info');
     }
 
     /**
      * Callback for "catch" promise method
      */
     private __promiseCatch__(message: string): void {
-        this.__output__.print(message, 'error');
-        this.__prompt__.blink();
+        this.__afterPromise__(message, 'error');
+    }
+    
+    /**
+     * Callback after the promise resolves or rejects
+     */
+    private __afterPromise__(toPrint: string, type: string) {
+        this.print(toPrint, type);
+        this.promptWaiting(false);
+    }
+    
+    /**
+     * Empties the ourput
+     */
+    public emptyScreen() {
+        this.__output__.empty();
+    }
+    
+    /**
+     * Clears the prompt
+     */
+    public clearPrompt() {
+        this.__prompt__.clear();
+    }
+    
+    /**
+     * Sends a message to the output
+     */
+    public print(message: string | string[], type?: string) {
+        this.__output__.print(message, type);
         this.__prompt__.scrollIntoView();
+    }
+    
+    /**
+     * Logs a message
+     */
+    public logMessage(message: string) {
+        this.print(message);
+    }
+    
+    /**
+     * Logs a message, info level
+     */
+    public infoMessage(message: string) {
+        this.print(message, 'info');
+    }
+    
+    /**
+     * Logs a message, warn level
+     */
+    public warnMessage(message: string) {
+        this.print(message, 'warn');
+    }
+    
+    /**
+     * Logs a message, error level
+     */
+    public errorMessage(message: string) {
+        this.print(message, 'error');
+    }
+    
+    /**
+     * Shows spinning or blinking cursor
+     */
+    public promptWaiting(spin: boolean = true) {
+        if (spin) {
+            this.__prompt__.spin();
+        } else {
+            this.__prompt__.blink();
+        }
+    }
+    
+    /**
+     * Scrolls the prompt into view
+     */
+    public scrollIntoView() {
+        this.__prompt__.scrollIntoView();
+    }
+    
+    /**
+     * Extends the current API
+     */
+    public extendApi(...mixins: Object[]) {
+        this.__api__.extend(...mixins);
+    }
+    
+    /**
+     * Returns a list of available commands
+     */
+    public get commands(): string[] {
+        return this.__api__.commands;
     }
     
     /**
      * Destroys the instance
      */
-    public destroy(): void {
+    public destroy() {
         this.__click__.destroy();
         this.__output__.destroy();
         this.__prompt__.destroy();
-    }
-    
-    /***********************/
-    /* COMMANDS BY DEFAULT */
-    /***********************/
-    
-    /**
-     * Command to clear the screen
-     */
-    private __clear__(): void {
-        this.__output__.empty();
-        this.__prompt__.clear();
-    }
-    
-    /**
-     * Lists commands availables
-     */
-    private __lsc__(commands: string[] = this.__api__.commands): void {
-        this.__output__.print(`<pre>/**\n * ${commands.join('\n * ')}\n */</pre>`, 'result');
     }
 }

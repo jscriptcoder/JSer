@@ -1,12 +1,19 @@
+import {extend} from './utils';
+
 /**
  * Matches function params list
  */
-const FUNC_PARAMS_RE = new RegExp('[a-z0-9_\$]+', 'gi');
+const FUNC_PARAMS_RE = /[a-z0-9_\$]+/gi;
 
 /**
  * Matches function signature
  */
 const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
+
+/**
+ * Matches just function and name
+ */
+const FUNC_AND_NAME_RE = /function\s*[^\(]*/;
 
 export default class ApiWrapper {
     
@@ -44,14 +51,16 @@ export default class ApiWrapper {
         this.__members__ = [];
         
         for(let memberName in this.__api__) {
+            if (memberName.indexOf('_') === 0) continue; // skips privates
+            
             this.__members__.push(memberName);
             
             let memberValue = this.__api__[memberName];
-            let memberValueString = memberValue.toString().trim();
+            let memberValueString = `${memberValue}`.trim();
             
             if (typeof memberValue === 'function') {
                 // methodName([...args])
-                this.__commands__.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace('function', memberName));
+                this.__commands__.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace(FUNC_AND_NAME_RE, memberName));
             } else {
                 // property = value
                 this.__commands__.push(`${memberName} = ${memberValue}`);
@@ -65,17 +74,18 @@ export default class ApiWrapper {
     public run(command: string): any[] {
         
         let evalResult: string;
-        let globalEval = window['eval']; // indirect eval call, eval'ing in global scope
+        const globalEval = window['eval']; // indirect eval call, eval'ing in global scope
         
         // tests whether or not it's a function params command
-        let funcParams: string[] = command.match(FUNC_PARAMS_RE);
+        const funcParams: string[] = command.match(FUNC_PARAMS_RE);
 
         if (funcParams && typeof this.__api__[funcParams[0]] === 'function') {
             
-            let funcName = funcParams.shift(); // function name
-            let params = funcParams.map((param) => { // list of parameters
+            const funcName = funcParams.shift(); // function name
+            const params = funcParams.map((param) => { // list of parameters
                 try {
-                    return globalEval(param); // number, boolean
+                    globalEval(param); // number, boolean, Object, otherwise exception (meant to be a string)
+                    return param;
                 } catch (e) {
                     return `'${param}'`; // string (wrapped in quotations)
                 }
@@ -91,7 +101,7 @@ export default class ApiWrapper {
             // the magic happens here:
             evalResult = globalEval(`with(${this.__apiName__}){${command}}`);
             if (typeof evalResult !== 'undefined') {
-                return [evalResult, 'result'];
+                return [evalResult, 'info'];
             } else {
                 return [];
             }
@@ -109,6 +119,13 @@ export default class ApiWrapper {
      */
     public get api(): Object {
         return this.__api__;
+    }
+    
+    /**
+     * Extends the current API
+     */
+    public extend(...mixins: Object[]) {
+        extend(this.__api__, mixins);
     }
     
     /**
