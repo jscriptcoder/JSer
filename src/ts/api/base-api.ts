@@ -17,8 +17,12 @@ export default class BaseAPI {
         let commands: string[] = [];
         const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
         const FUNC_AND_NAME_RE = /function\s*[^\(]*/;
+        const members = Object.keys(obj)
+                            .concat(Object.getOwnPropertyNames(obj))
+                            .concat(Object.getOwnPropertyNames((obj).constructor.prototype))
+                            .filter((value, pos, arr) => arr.indexOf(value) === pos);
 
-        for(let memberName in obj) {
+        for(let memberName of members) {
             let memberValue = obj[memberName];
             let memberValueString = `${memberValue}`.trim();
 

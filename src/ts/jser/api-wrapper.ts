@@ -76,28 +76,10 @@ export default class ApiWrapper {
         let evalResult: string;
         const globalEval = window['eval']; // indirect eval call, eval'ing in global scope
         
-        // tests whether or not it's a function params command
-        const funcParams: string[] = command.match(FUNC_PARAMS_RE);
-
-        if (funcParams && typeof this.__api__[funcParams[0]] === 'function') {
-            
-            const funcName = funcParams.shift(); // function name
-            const params = funcParams.map((param) => { // list of parameters
-                try {
-                    globalEval(param); // number, boolean, Object, otherwise exception (meant to be a string)
-                    return param;
-                } catch (e) {
-                    return `'${param}'`; // string (wrapped in quotations)
-                }
-            });
-            
-            // builds funcName(param1, param2, ...);
-            command = `${funcName}(${params.join(', ')})`;
-        }
-
         window[this.__apiName__] = this.__api__;
         
         try {
+            
             // the magic happens here:
             evalResult = globalEval(`with(${this.__apiName__}){${command}}`);
             if (typeof evalResult !== 'undefined') {
@@ -107,7 +89,31 @@ export default class ApiWrapper {
             }
             
         } catch(err) {
-            return [err.toString(), 'error']
+            
+            // tests whether or not it's a function params command
+            const funcParams: string[] = command.match(FUNC_PARAMS_RE);
+
+            if (funcParams && typeof this.__api__[funcParams[0]] === 'function') {
+
+                const funcName = funcParams.shift(); // function name
+                const params = funcParams.map((param) => { // list of parameters
+                    try {
+                        globalEval(param); // number, boolean, Object, otherwise exception (meant to be a string)
+                        return param;
+                    } catch (e) {
+                        return `'${param}'`; // string (wrapped in quotations)
+                    }
+                });
+
+                // builds funcName(param1, param2, ...);
+                command = `${funcName}(${params.join(', ')})`;
+                
+                return this.run(command);
+                
+            } else {
+                return [err.toString(), 'error'];    
+            }
+            
         }
 
         delete window[this.__apiName__];
