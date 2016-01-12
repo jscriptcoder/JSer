@@ -1,6 +1,7 @@
 import JSer from './jser/jser';
 import BaseAPI from './api/base-api';
 import TestAPI from './api/test-api';
+import JScriptCoderAPI from './api/jscriptcoder-api';
 
 let api1 = JSer.mixins(new BaseAPI(), new TestAPI());
 let jser1 = new JSer(<HTMLElement>document.querySelector('#jser1'), api1, {
@@ -15,7 +16,7 @@ let jser2 = new JSer(<HTMLElement>document.querySelector('#jser2'), api2, {
     active: false
 });
 
-let api3 = new BaseAPI();
+let api3 = JSer.mixins(new BaseAPI(), new JScriptCoderAPI());
 let jser3 = new JSer(<HTMLElement>document.querySelector('#jser3'), api3, {
     backgroundColor: 'darkblue',
     fontColor: 'lightgreen',

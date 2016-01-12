@@ -135,3 +135,21 @@ export function createFragment(...nodes: Node[]): DocumentFragment {
 export function defer(callback: Function): void {
     setTimeout(callback);
 }
+
+/**
+ * Returns the member found at the end of the path
+ */
+export function getMemberFrom(object: Object, path: string): any {
+    const namespace = path.split('.');
+    let property = object;
+    
+    for (let propKey of namespace) {
+        if (typeof property[propKey] !== 'undefined') {
+            property = property[propKey];
+        } else {
+            return;
+        }
+    }
+    
+    return property;
+}

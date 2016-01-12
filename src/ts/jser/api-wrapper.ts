@@ -1,4 +1,4 @@
-import {extend} from './utils';
+import {extend, getMemberFrom} from './utils';
 
 /**
  * Matches function params list
@@ -69,26 +69,43 @@ export default class ApiWrapper {
     }
     
     /**
-     * Runs a command evaluating on the global scope against the API
+     * Executes a command evaluating on the global scope against the API
      */
-    public run(command: string): any[] {
+    public exec(command: string): any[] {
         
-        let evalResult: string;
         const globalEval = window['eval']; // indirect eval call, eval'ing in global scope
         
-        window[this.__apiName__] = this.__api__;
+        // this function will do the magic trick ;-)
+        const doEval = (cmd: string): any[] => {
+        
+            let evalResult: string;
+            let returnEval: any[];
+            
+            window[this.__apiName__] = this.__api__;
+            
+            // the magic happens here:
+            evalResult = globalEval(`with(${this.__apiName__}){${cmd}}`);
+            if (typeof evalResult !== 'undefined') {
+                returnEval = [evalResult, 'info'];
+            } else {
+                returnEval = [];
+            }
+            
+            delete window[this.__apiName__];
+            
+            return returnEval;
+            
+        }
+        
+        // for commands such as "path.to.member.of.api" that turns out to be
+        // methods then API.path.to.member.of.api()
+        if (typeof getMemberFrom(this.__api__, command) === 'function') command = `${command}()`;
         
         try {
             
-            // the magic happens here:
-            evalResult = globalEval(`with(${this.__apiName__}){${command}}`);
-            if (typeof evalResult !== 'undefined') {
-                return [evalResult, 'info'];
-            } else {
-                return [];
-            }
+            return doEval(command);
             
-        } catch(err) {
+        } catch(err1) {
             
             // tests whether or not it's a function params command
             const funcParams: string[] = command.match(FUNC_PARAMS_RE);
@@ -107,17 +124,26 @@ export default class ApiWrapper {
 
                 // builds funcName(param1, param2, ...);
                 command = `${funcName}(${params.join(', ')})`;
-                
-                return this.run(command);
+
+                try { // let's try again with the new command
+
+                    return doEval(command);
+                    
+                } catch(err2) {
+                    
+                    return [err2.toString(), 'error'];
+                    
+                }
                 
             } else {
-                return [err.toString(), 'error'];    
+                
+                return [err1.toString(), 'error'];
+                
             }
+            
             
         }
 
-        delete window[this.__apiName__];
-        
     }
     
     /**

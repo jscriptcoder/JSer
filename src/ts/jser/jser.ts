@@ -171,7 +171,7 @@ export default class JSer extends ElementWrapper {
         this.print(this.__prompt__.toString());
         
         if (command && run) {
-            let [evalResult, type] = this.__api__.run(command);
+            let [evalResult, type] = this.__api__.exec(command);
             
             if (evalResult instanceof Promise) {
                 
@@ -317,6 +317,13 @@ export default class JSer extends ElementWrapper {
      */
     public get commands(): string[] {
         return this.__api__.commands;
+    }
+    
+    /**
+     * Executes a command
+     */
+    public exec(command) {
+        this.__api__.exec(command);
     }
     
     /**
