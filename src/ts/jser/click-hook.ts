@@ -36,7 +36,7 @@ export default class ClickHook {
     /**
      * Attaches some event handlers (keypress and keydown)
      */
-    private __addEventListeners__(): void {
+    private __addEventListeners__() {
         this.__onClickListener__ = this.__onClick__.bind(this);
         this.__onDocumentClickListener__ = this.__onDocumentClick__.bind(this);
         this.__onWindowBlurListener__ = this.__onWindowBlur__.bind(this);
@@ -49,7 +49,7 @@ export default class ClickHook {
     /**
      * Event handler for click
      */
-    private __onClick__(e: MouseEvent): void {
+    private __onClick__(e: MouseEvent) {
         
         // if this is triggered we're getting back the focus but 
         // we need to defer to wait for the event bubbling to finish
@@ -59,7 +59,7 @@ export default class ClickHook {
     /**
      * Event handler for documentClick
      */
-    private __onDocumentClick__(e: MouseEvent): void {
+    private __onDocumentClick__(e: MouseEvent) {
         // if this is triggered it means we're losing the focus
         this.__onClickHandler__('blur');
     }
@@ -67,14 +67,14 @@ export default class ClickHook {
     /**
      * Event handler for windowBlur
      */
-    private __onWindowBlur__(e: MouseEvent): void {
+    private __onWindowBlur__(e: MouseEvent) {
         this.__onClickHandler__('blur');
     }
     
     /**
      * Destroys the instance removing event listeners
      */
-    public destroy(): void {
+    public destroy() {
         this.__target__.removeEventListener('click', this.__onClickListener__);
         document.removeEventListener('click', this.__onDocumentClickListener__);
         window.removeEventListener("blur", this.__onWindowBlurListener__);

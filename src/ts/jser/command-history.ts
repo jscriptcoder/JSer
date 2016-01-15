@@ -84,7 +84,7 @@ export default class CommandHistory {
     /**
      * Adds a new command to the list
      */
-    public add(cmd: string): void {
+    public add(cmd: string) {
         
         // we skip storing the command if it's empty
         if (!cmd) return;
@@ -105,7 +105,7 @@ export default class CommandHistory {
     /**
      * Destroys the object
      */
-    public destroy(): void {
+    public destroy() {
         this.__commands__.length = 0;
     }
     

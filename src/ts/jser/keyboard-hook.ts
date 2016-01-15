@@ -59,7 +59,7 @@ export default class KeyboardHook {
     /**
      * Attaches some event handlers (keypress and keydown)
      */
-    private __addEventListeners__(): void {
+    private __addEventListeners__() {
         this.__onKeypressListener__ = this.__onKeypress__.bind(this);
         this.__onKeydownListener__ = this.__onKeydown__.bind(this);
         
@@ -70,7 +70,7 @@ export default class KeyboardHook {
     /**
      * Gets triggered on keypress
      */
-    private __onKeypress__(event: KeyboardEvent): void {
+    private __onKeypress__(event: KeyboardEvent) {
         if (!this.__capture__) return;
         
         event.preventDefault();
@@ -83,7 +83,7 @@ export default class KeyboardHook {
     /**
      * Gets triggered on keydown
      */
-    private __onKeydown__(event: KeyboardEvent): void {
+    private __onKeydown__(event: KeyboardEvent) {
         if (!this.__capture__) return;
         
         switch(event.which) {
@@ -121,6 +121,9 @@ export default class KeyboardHook {
         }
     }
     
+    /**
+     * Stops/Starts capturing keys
+     */
     public set capture(capture: boolean) {
         this.__capture__ = capture;
     }
@@ -128,7 +131,7 @@ export default class KeyboardHook {
     /**
      * Destroys the instance removing event listeners
      */
-    public destroy(): void {
+    public destroy() {
         document.removeEventListener('keypress', this.__onKeypressListener__);
         document.removeEventListener('keydown', this.__onKeydownListener__);
     }

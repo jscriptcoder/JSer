@@ -141,7 +141,6 @@ export default class ApiWrapper {
                 
             }
             
-            
         }
 
     }
@@ -156,8 +155,8 @@ export default class ApiWrapper {
     /**
      * Extends the current API
      */
-    public extend(...mixins: Object[]) {
-        extend(this.__api__, mixins);
+    public extend(...apis: Object[]) {
+        extend(this.__api__, ...apis);
     }
     
     /**

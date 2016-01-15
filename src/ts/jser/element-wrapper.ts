@@ -22,42 +22,42 @@ export default class ElementWrapper {
     /**
      * Adds a class to the element
      */
-    public addClass(className: string): void {
+    public addClass(className: string) {
         this.__el__.classList.add(className);
     }
     
     /**
      * Removes a class from the element
      */
-    public removeClass(className: string): void {
+    public removeClass(className: string) {
         this.__el__.classList.remove(className);
     }
     
     /**
      * Adds an event listener
      */
-    public addListener(type: string, listener: EventListener): void {
+    public addListener(type: string, listener: EventListener) {
         this.__el__.addEventListener(type, listener);
     }
     
     /**
      * Removes the even listener
      */
-    public removeListener(type: string, listener: EventListener): void {
+    public removeListener(type: string, listener: EventListener) {
         this.__el__.removeEventListener(type, listener);
     }
     
     /**
      * Shows the element
      */
-    public show(): void {
+    public show() {
         this.__el__.style.display = 'block';
     }
     
     /**
      * Hides the element
      */
-    public hide(): void {
+    public hide() {
         this.__el__.style.display = 'none';
     }
     
@@ -92,14 +92,14 @@ export default class ElementWrapper {
     /**
      * Empties the element
      */
-    public empty(): void {
+    public empty() {
         this.html = '';
     }
     
     /**
      * Scrolls the element into the visible area of the browser
      */
-    public scrollIntoView(): void {
+    public scrollIntoView() {
         this.__el__.scrollIntoView(true);
     }
     

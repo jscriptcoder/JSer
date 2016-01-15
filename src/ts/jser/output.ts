@@ -10,7 +10,7 @@ export default class Output extends ElementWrapper {
     /**
      * Shows messages in the screen
      */
-    public print(message: string | string[], type: string = 'default'): void {
+    public print(message: string | string[], type: string = 'default') {
         if (Array.isArray(message)) { // there are more than one line
             for(let msg of message) {
                 this.print(msg, type);
@@ -26,7 +26,7 @@ export default class Output extends ElementWrapper {
     /**
      * Destroys the instance
      */
-    public destroy(): void {
+    public destroy() {
         this.empty();
     }
 }

@@ -48,7 +48,7 @@ export default class ProgramBlock {
     /**
      * Initialises a block
      */
-    private __beginBlock__(): void {
+    private __beginBlock__() {
         this.__brackets__.push(true);
         this.__tabs__++;
     }
@@ -56,7 +56,7 @@ export default class ProgramBlock {
     /**
      * Ends a block
      */
-    private __endBlock__(): void {
+    private __endBlock__() {
         this.__brackets__.pop();
         this.__tabs__--;
     }
@@ -120,7 +120,7 @@ export default class ProgramBlock {
     /**
      * Adds a line to the program
      */
-    public addLine(line: string): void {
+    public addLine(line: string) {
         
         // beginning of a block
         if (line.match(BEGIN_BLOCK_RE)) {
@@ -145,7 +145,7 @@ export default class ProgramBlock {
     /**
      * Clears the program
      */
-    public clear(): void {
+    public clear() {
         this.__lines__.length = 0;
         this.__brackets__.length = 0;
         this.__tabs__ = 0;
@@ -168,7 +168,7 @@ export default class ProgramBlock {
     /**
      * Destroys the instance
      */
-    public destroy(): void {
+    public destroy() {
         this.clear();
     }
     

@@ -55,7 +55,7 @@ export function compileTemplate(tmpl: string, hashMap: {[idx: string]: string}):
 /**
  * Injects custom styles into the head of the document
  */
-export function injectStyles(styles: string, id?: string): void {
+export function injectStyles(styles: string, id?: string) {
     let style = doc.createElement('style');
     if (id) style.id = id;
     style.innerHTML = styles;
@@ -132,7 +132,7 @@ export function createFragment(...nodes: Node[]): DocumentFragment {
 /**
  * Defers functions to the next tick (event loop)
  */
-export function defer(callback: Function): void {
+export function defer(callback: Function) {
     setTimeout(callback);
 }
 

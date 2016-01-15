@@ -28,6 +28,11 @@ export default class Prompt extends ElementWrapper {
     private __isSelection__: boolean;
     
     /**
+     * Flag used to hide the typing
+     */
+    private __hideTyping__: boolean;
+    
+    /**
      * Command line introduced
      */
     private __command__: string;
@@ -116,7 +121,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Gets called when the user interacts with the keyboard
      */
-    private __onKeypressHandler__(action: string, key: string, shift?: boolean): void {
+    private __onKeypressHandler__(action: string, key: string, shift?: boolean) {
         const method = `__${action}__`
         if (typeof this[method] === 'function') {
             this[method](key, shift);
@@ -137,34 +142,38 @@ export default class Prompt extends ElementWrapper {
      * Joins the left and right parts to form the new command, 
      * adding the cursor in between
      */
-    private __joinCommandAndInsert__([left, right]: string[]): void {
+    private __joinCommandAndInsert__([left, right]: string[]) {
         const cursorInnerHTML = this.__cursor__.innerHTML;
         
         this.__command__ = left + right;
         
-        // Stupid IE empties this cursor element when 
-        // we set the input to an empty string
-        this.__input__.innerHTML = '';
-        this.__cursor__.innerHTML = cursorInnerHTML;
-        
-        this.__input__.appendChild(utils.createFragment(...[
-            utils.createText(left),
-            this.__cursor__,
-            utils.createText(right.substr(1))
-        ]));
+        if (!this.__hideTyping__) {
+         
+            // Stupid IE empties this cursor element when 
+            // we set the input to an empty string
+            this.__input__.innerHTML = '';
+            this.__cursor__.innerHTML = cursorInnerHTML;
+
+            this.__input__.appendChild(utils.createFragment(...[
+                utils.createText(left),
+                this.__cursor__,
+                utils.createText(right.substr(1))
+            ]));
+            
+        }
     }
     
     /**
      * Removes the cursor from the input
      */
-    private __removeCursor__(): void {
+    private __removeCursor__() {
         this.__input__.innerHTML = utils.htmlEncode(this.__command__);
     }
     
     /**
      * Prepares a selection range
      */
-    private __prepareSelectionRange__(): void {
+    private __prepareSelectionRange__() {
         if (!this.__isSelection__) {
             this.__isSelection__ = true;
             
@@ -181,7 +190,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Deletes selected text
      */
-    private __deleteSelection__(): void {
+    private __deleteSelection__() {
         const range = this.__selection__.getRangeAt(0);
         const selected = this.__command__.slice(range.startOffset, range.endOffset);
         
@@ -196,7 +205,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Deletes selected character
      */
-    private __deleteCharacter__(action: string): void {
+    private __deleteCharacter__(action: string) {
         let [left, right] = this.__getCommandParts__();
         const part = action === 'backspace' ? left : right;
         
@@ -229,7 +238,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Inserts a new character in the input
      */
-    private __insertCharacter__(char: string): void {
+    private __insertCharacter__(char: string) {
         
         // if there is selection, delete first
         if (this.__isSelection__) {
@@ -258,7 +267,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects characters from the left on
      */
-    public selectLeftCharacter(): void {
+    public selectLeftCharacter() {
         if (this.__cursorPosition__ > 0) {
             
             this.__prepareSelectionRange__();
@@ -281,7 +290,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects characters from the left on
      */
-    public selectRightCharacter(): void {
+    public selectRightCharacter() {
         if (this.__cursorPosition__ < this.__command__.length) {
             
             this.__prepareSelectionRange__();
@@ -304,7 +313,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects a range of characters to the left
      */
-    public selectLeftRange(): void {
+    public selectLeftRange() {
         if (this.__cursorPosition__ > 0) {
             
             this.__prepareSelectionRange__();
@@ -327,7 +336,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Selects a range of characters to the right
      */
-    public selectRightRange(): void {
+    public selectRightRange() {
         if (this.__cursorPosition__ < this.__command__.length) {
             
             this.__prepareSelectionRange__();
@@ -350,7 +359,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Moves the cursor to a different position
      */
-    public moveCursorTo(position: number): void {
+    public moveCursorTo(position: number) {
         if (position < 0) {
             this.__cursorPosition__ = 0;
         } else if (position > this.__command__.length) {
@@ -373,49 +382,49 @@ export default class Prompt extends ElementWrapper {
     /**
      * Moves the cursor forward
      */
-    public moveCursorForward(): void {
+    public moveCursorForward() {
         this.moveCursorTo(this.__cursorPosition__ + 1);
     }
     
     /**
      * Moves the cursor backward
      */
-    public moveCursorBackward(): void {
+    public moveCursorBackward() {
         this.moveCursorTo(this.__cursorPosition__ - 1);
     }
     
     /**
      * Moves the cursor to the beginning
      */
-    public moveCursorHome(): void {
+    public moveCursorHome() {
         this.moveCursorTo(0);
     }
     
     /**
      * Moves the cursor to the end
      */
-    public moveCursorEnd(): void {
+    public moveCursorEnd() {
         this.moveCursorTo(this.__command__.length);
     }
     
     /**
      * Shows the previous command in the input
      */
-    public showPreviousCommand(): void {
+    public showPreviousCommand() {
         this.enterCommand(this.__program__.strTabs + this.__history__.previous);
     }
     
     /**
      * Shows the next command in the input
      */
-    public showNextCommand(): void {
+    public showNextCommand() {
         this.enterCommand(this.__program__.strTabs + this.__history__.next)
     }
     
     /**
      * Enters a command in the input
      */
-    public enterCommand(command: string): void {
+    public enterCommand(command: string) {
         this.__command__ = command;
         this.moveCursorEnd();
     }
@@ -430,7 +439,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Clears the prompt from any command
      */
-    public clear(): void {
+    public clear() {
         this.__command__ = '';
         this.moveCursorTo(0);
     }
@@ -458,20 +467,54 @@ export default class Prompt extends ElementWrapper {
         
     }
     
-    public blink(): void {
+    /**
+     * Makes the cursor blinks
+     */
+    public blink() {
         this.__cursor__.classList.remove('spin');
         this.__cursor__.classList.add('blink');
     }
     
-    public spin(): void {
+    /**
+     * Makes the cursor spins
+     */
+    public spin() {
         this.__cursor__.classList.remove('blink');
         this.__cursor__.classList.add('spin');
     }
     
     /**
+     * Sets the innerHTML of the symbol
+     */
+    public set symbol(symbol: string) {
+        this.__symbol__.innerHTML = symbol;
+    }
+    
+    /**
+     * Returns the textContent of the symbol
+     */
+    public get symbol(): string {
+        return this.__symbol__.textContent;
+    }
+    
+    /**
+     * Puts the original symbol back
+     */
+    public resetSymbol() {
+        this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];
+    }
+    
+    /**
+     * Prevents from showing the typed keys, but there is still capture
+     */
+    public set hideTyping(hide: boolean) {
+        this.__hideTyping__ = hide;
+    }
+    
+    /**
      * Destroys the instance
      */
-    public destroy(): void {
+    public destroy() {
         this.__history__.destroy();
         this.__program__.destroy();
         this.__keyboard__.destroy();
@@ -484,7 +527,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends BACKSPACE/DEL to the input
      */
-    private __delete__(action: string): void {
+    private __delete__(action: string) {
         if (this.__command__ !== '') {
             if (this.__isSelection__) {
                 this.__deleteSelection__();
@@ -497,7 +540,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends a TAB to the input
      */
-    private __tab__(num: number = 1): void {
+    private __tab__(num: number = 1) {
         if (this.__command__.match(MATCHING_MEMBERS_RE) && !this.__program__.is) {
             this.__onTab__(this.__command__);
         } else {
@@ -508,7 +551,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends ENTER to the input
      */
-    private __enter__(shift: boolean): void {
+    private __enter__(shift: boolean) {
         let command = this.__command__.trim();
         let inProgram = false;
         let endProgram = false;
@@ -549,8 +592,8 @@ export default class Prompt extends ElementWrapper {
             
             // hides the symbol at the beginning of a program
             if (program.numLines === 1) {
-                const symbolLength = this.__symbol__.textContent.trim().length;
-                this.__symbol__.innerHTML = utils.space(symbolLength);
+                const symbolLength = this.symbol.trim().length;
+                this.symbol = utils.space(symbolLength);
             }
             
             // sends as many tabs as there are in the previous line
@@ -558,14 +601,14 @@ export default class Prompt extends ElementWrapper {
             
         } else if (endProgram) {
             // returns the symbol if a program finished
-            this.__symbol__.innerHTML = this.__symbol__.dataset['symbol'];            
+            this.resetSymbol();
         }
     }
     
     /**
      * Sends HOME/END to the input
      */
-    private __jump__(action: string, shift: boolean): void {
+    private __jump__(action: string, shift: boolean) {
         switch(action) {
             case 'home':
                 if (shift) {
@@ -587,7 +630,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends arrows to the input
      */
-    private __arrow__(action: string, shift: boolean): void {
+    private __arrow__(action: string, shift: boolean) {
         switch(action) {
                 
             case 'up': this.showPreviousCommand(); break;
@@ -613,7 +656,7 @@ export default class Prompt extends ElementWrapper {
     /**
      * Sends a character to the input
      */
-    private __char__(char: string): void {
+    private __char__(char: string) {
         if (this.__program__.isBlock && !this.isCommand && char === '}') {
             
             // we're in a block and closing with a single bracket

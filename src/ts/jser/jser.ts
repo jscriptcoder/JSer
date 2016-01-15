@@ -8,6 +8,7 @@ import ClickHook from './click-hook';
 import Output from './output';
 import Prompt from './prompt';
 import ApiWrapper from './api-wrapper';
+import BaseAPI from './base-api';
 
 interface JSerConfig {
     backgroundColor?: string;
@@ -46,13 +47,6 @@ const DEFAULT_CONFIG: JSerConfig = {
 export default class JSer extends ElementWrapper {
     
     /**
-     * Mixes up multiple objects
-     */
-    public static mixins(...mixins: Object[]) {
-        return utils.extend({}, ...mixins);
-    }
-    
-    /**
      * Unique ID for the instance
      */
     private __uid__: number;
@@ -71,6 +65,11 @@ export default class JSer extends ElementWrapper {
      * Indicates whether or not jser has the focus
      */
     private __active__: boolean;
+    
+    /**
+     * Will contain the callback for entered password
+     */
+    private __onPassword__: (password: string) => void;
     
     /**
      * @see FocusHook
@@ -99,9 +98,8 @@ export default class JSer extends ElementWrapper {
         this.__name__ = `jser_${this.__uid__}`;
         this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
         
-        this.__api__ = new ApiWrapper(this.__name__, utils.extend(api, {__jser__: this}));
-        
         this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
+        this.__api__ = new ApiWrapper(this.__name__, utils.extend(new BaseAPI(this), api));
         
         this.__generateStyles__();
         this.__render__();
@@ -110,7 +108,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Generates and injects styles for the instance
      */
-    private __generateStyles__(): void {
+    private __generateStyles__() {
         
         const stylesTmpl = utils.compileTemplate(tmpl.JSER_STYLES_TMPL, {
             'uid': this.__uid__.toString(),
@@ -130,7 +128,7 @@ export default class JSer extends ElementWrapper {
      * Renders JSer, attaching template to the DOM
      * and running Output and Prompt logic
      */
-    private __render__(): void {
+    private __render__() {
         this.addClass(this.__name__);
         
         this.html = utils.compileTemplate(tmpl.JSER_TMPL, {
@@ -153,7 +151,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Gets called when the user clicks on the page
      */
-    private __clickHandler__(action: string): void {
+    private __clickHandler__(action: string) {
         switch(action) {
             case 'focus': 
                 this.__prompt__.active = true;
@@ -165,34 +163,63 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
+     * Indicates whether or not we're on password mode
+     */
+    private get isPasswordMode(): boolean {
+        return typeof this.__onPassword__ === 'function';
+    }
+    
+    /**
+     * On password mode, when the user enters the password, this method gets triggered
+     */
+    private onPassword(command: string) {
+        this.__onPassword__(command);
+        this.__onPassword__ = void 0;
+        this.__prompt__.resetSymbol();
+        this.__prompt__.hideTyping = false;
+    }
+    
+    /**
      * Gets triggered when a command (or block) has heen entered
      */
-    private __onEnter__(command: string, run: boolean): void {
-        this.print(this.__prompt__.toString());
+    private __onEnter__(command: string, run: boolean) {
         
-        if (command && run) {
-            let [evalResult, type] = this.__api__.exec(command);
+        if (this.isPasswordMode) {
             
-            if (evalResult instanceof Promise) {
+            this.onPassword(command);
+            
+        } else {
+            
+            this.print(this.__prompt__.toString());
+
+            if (command && run) {
+                // let's process the command
                 
-                this.promptWaiting();
-                
-                evalResult
-                    .then(this.__promiseThen__.bind(this))
-                    .catch(this.__promiseCatch__.bind(this))
-                ;
-                
-            } else if (evalResult) {
-                this.print(evalResult, type);    
+                let [evalResult, type] = this.__api__.exec(command);
+
+                if (evalResult instanceof Promise) {
+
+                    this.promptWaiting();
+
+                    evalResult
+                        .then(this.__promiseThen__.bind(this))
+                        .catch(this.__promiseCatch__.bind(this))
+                    ;
+
+                } else if (evalResult) {
+                    this.print(evalResult, type);    
+                }
+
             }
             
         }
+        
     }
     
     /**
      * Gets triggered when tab has been entered to list matching members
      */
-    private __onTab__(command: string): void {
+    private __onTab__(command: string) {
         const command_re = new RegExp(`^${command}`, 'i');
         const matches = this.__api__.members.filter((member: string) => {
             return !!member.match(command_re);
@@ -218,14 +245,14 @@ export default class JSer extends ElementWrapper {
     /**
      * Callback for "then" promise method
      */
-    private __promiseThen__(result: any): void {
+    private __promiseThen__(result: any) {
         this.__afterPromise__(result, 'info');
     }
 
     /**
      * Callback for "catch" promise method
      */
-    private __promiseCatch__(message: string): void {
+    private __promiseCatch__(message: string) {
         this.__afterPromise__(message, 'error');
     }
     
@@ -308,8 +335,8 @@ export default class JSer extends ElementWrapper {
     /**
      * Extends the current API
      */
-    public extendApi(...mixins: Object[]) {
-        this.__api__.extend(...mixins);
+    public extendApi(...apis: Object[]) {
+        this.__api__.extend(...apis);
     }
     
     /**
@@ -324,6 +351,16 @@ export default class JSer extends ElementWrapper {
      */
     public exec(command) {
         this.__api__.exec(command);
+    }
+    
+    /**
+     * Goes into password mode (changes symbol and hides typing)
+     */
+    public passwordMode(onPassword: (password: string) => void) {
+        this.clearPrompt();
+        this.__prompt__.symbol = 'Password:';
+        this.__prompt__.hideTyping = true;
+        this.__onPassword__ = onPassword;
     }
     
     /**
