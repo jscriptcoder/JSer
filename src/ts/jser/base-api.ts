@@ -1,5 +1,8 @@
 import JSer from '../jser/jser';
 
+/**
+ * Basic list of commands
+ */
 export default class BaseAPI {
     
     /**

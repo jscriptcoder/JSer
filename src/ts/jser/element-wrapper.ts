@@ -1,5 +1,5 @@
 /**
- * HTMLElement wrapper
+ * HTMLElement wrapper to manipulate DOM elements more easily (jQuery-like)
  */
 export default class ElementWrapper {
     

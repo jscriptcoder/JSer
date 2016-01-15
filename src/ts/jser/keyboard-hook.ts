@@ -13,6 +13,9 @@ const SPECIAL_KEYS: {[idx: number]: string} = {
     46: 'del'
 };
 
+/**
+ * Installs hooks to capture keyboard interactions
+ */
 export default class KeyboardHook {
     
     /**

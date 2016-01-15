@@ -2,10 +2,23 @@ import JSer from '../jser/jser';
 
 export default class JScriptCoderAPI {
     
-    private __jser__: JSer;
+    /**
+     * Instance of JSer (read only)
+     */
+    public jser: JSer
     
+    /**
+     * Alias for lsc command
+     */
     public help() {
-        this.__jser__.exec('lsc');
+        this.jser.exec('lsc');
+    }
+    
+    /**
+     * Alias for login command
+     */
+    public sudo(user: string) {
+        this.jser.exec(`login ${user}`);
     }
     
 }

@@ -15,6 +15,9 @@ const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
  */
 const FUNC_AND_NAME_RE = /function\s*[^\(]*/;
 
+/**
+ * Wrapper for the api. It'll run javascript against it and extend it
+ */
 export default class ApiWrapper {
     
     /**

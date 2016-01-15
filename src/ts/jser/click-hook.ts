@@ -1,5 +1,8 @@
 import {defer} from './utils';
 
+/**
+ * Will install hooks for click events on the document and terminal
+ */
 export default class ClickHook {
     
     /**

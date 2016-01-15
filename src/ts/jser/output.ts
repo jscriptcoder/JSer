@@ -1,6 +1,9 @@
 import {createElement} from './utils';
 import ElementWrapper from './element-wrapper';
 
+/**
+ * Logs messages on the terminal
+ */
 export default class Output extends ElementWrapper {
     
     constructor(el: HTMLElement) {
