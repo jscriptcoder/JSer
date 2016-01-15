@@ -535,6 +535,8 @@ export default class Prompt extends ElementWrapper {
                 this.__deleteCharacter__(action);
             }
         }
+        
+        this.scrollIntoView();
     }
     
     /**
@@ -546,6 +548,8 @@ export default class Prompt extends ElementWrapper {
         } else {
             this.__insertCharacter__(utils.repeatString(num, this.__program__.strTab));   
         }
+        
+        this.scrollIntoView();
     }
     
     /**
@@ -625,6 +629,8 @@ export default class Prompt extends ElementWrapper {
                 }
                 break;
         }
+        
+        this.scrollIntoView();
     }
     
     /**
@@ -651,6 +657,8 @@ export default class Prompt extends ElementWrapper {
                     this.moveCursorForward();
                 }
         }
+        
+        this.scrollIntoView();
     }
     
     /**
@@ -666,6 +674,7 @@ export default class Prompt extends ElementWrapper {
         }
         
         this.__insertCharacter__(char);
+        this.scrollIntoView();
     }
     
 }

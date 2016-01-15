@@ -64,6 +64,9 @@ export default class ApiWrapper {
             if (typeof memberValue === 'function') {
                 // methodName([...args])
                 this.__commands__.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace(FUNC_AND_NAME_RE, memberName));
+            } else if (memberValue instanceof Array) {
+                // array => [...]
+                this.__commands__.push(`${memberName} = [ ${memberValue.join(', ')} ]`);
             } else {
                 // property = value
                 this.__commands__.push(`${memberName} = ${memberValue}`);

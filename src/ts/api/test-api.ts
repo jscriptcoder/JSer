@@ -14,6 +14,8 @@ export default class TestAPI {
     
     public age: number = 37;
     
+    public list: any[] = ['something', 4, true, new Date()];
+    
     public test(...args) {
         return `Testing ${args.length ? args.join(', ') : ''}`;
     }

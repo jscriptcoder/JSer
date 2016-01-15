@@ -49,12 +49,23 @@ export default class BaseAPI {
                             .filter((value, pos, arr) => arr.indexOf(value) === pos);
 
         for(let memberName of members) {
+            
+            if (memberName.indexOf('_') === 0) continue; // skips privates
+            
             let memberValue = obj[memberName];
             let memberValueString = `${memberValue}`.trim();
 
             if (typeof memberValue === 'function') {
                 // methodName([...args])
                 commands.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace(FUNC_AND_NAME_RE, memberName));
+                
+            /*} else if (typeof memberValue === 'string'){
+                // string => "string"
+                commands.push(`${memberName} = "${memberValue}"`);*/
+                
+            } else if (memberValue instanceof Array) {
+                // array => [...]
+                commands.push(`${memberName} = [\n      ${memberValue.join(',\n      ')}\n   ]`);
             } else {
                 // property = value
                 commands.push(`${memberName} = ${memberValue}`);
