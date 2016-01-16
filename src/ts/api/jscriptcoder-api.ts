@@ -5,7 +5,12 @@ export default class JScriptCoderAPI {
     /**
      * Instance of JSer (read only)
      */
-    public jser: JSer
+    public jser: JSer;
+    
+    /**
+     * API name
+     */
+    public apiName: string = 'JScriptCoderAPI';
     
     /**
      * Alias for lsc command

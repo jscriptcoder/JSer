@@ -15,7 +15,7 @@ interface PromptConfig {
 /**
  * Matches matching members to be listed
  */
-const MATCHING_MEMBERS_RE = /^[a-z0-9_\$]+$/i;
+const MATCHING_MEMBERS_RE: RegExp = /^[a-z0-9_\$]+$/i;
 
 /**
  * Takes care of the whole shell prompt logic

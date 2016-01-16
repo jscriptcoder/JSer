@@ -6,6 +6,8 @@ export default class TestAPI {
     
     private __jser__: JSer;
     
+    public apiName: string = 'TestAPI';
+    
     public testing: boolean = true;
     
     public name: string = 'TestAPI'

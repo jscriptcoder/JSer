@@ -21,6 +21,7 @@
     "gulp-sass": "~2.0.4",
     "gulp-typescript": "~2.9.2",
     "systemjs": "~0.19.5",
-    "es6-promise": "~3.0.2"
+    "es6-promise": "~3.0.2",
+    "codemirror": "~5.10.0"
   }
 }

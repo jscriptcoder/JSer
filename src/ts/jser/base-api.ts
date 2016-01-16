@@ -1,5 +1,18 @@
 import JSer from '../jser/jser';
 
+const HEADER_MESSAGE: string = `
+<pre>
+/**
+ * The adventure begins here. Type <i>lsc</i> to see the available commands...
+ * Remember, this is all about coding in JavaScript, and you'll discover an amazing world ;-)
+ *
+ * <strong>@author</strong> <i>Francisco Ramos <<a href="mailto:fran@jscriptcoder.com">fran@jscriptcoder.com</a>></i>
+ * <strong>@version</strong> <i>who.cares.0</i>
+ * <strong>@see</strong> <i><a href="https://github.com/jscriptcoder/jser" target="_blank">GitHub</a></i>
+ * <strong>@see</strong> <i><a href="https://codio.com/jscriptcoder/jser/" target="_blank">Codio.com</a></i>
+ */
+</pre>`;
+
 /**
  * Basic list of commands
  */
@@ -12,6 +25,14 @@ export default class BaseAPI {
     
     constructor(jser: JSer) {
         this.__jser__ = jser;
+    }
+    
+    /**
+     * Some initialization
+     * Should be overriden
+     */
+    public init() {
+        this.jser.infoMessage(HEADER_MESSAGE);
     }
     
     /**
@@ -63,7 +84,7 @@ export default class BaseAPI {
                 // string => "string"
                 commands.push(`${memberName} = "${memberValue}"`);*/
                 
-            } else if (memberValue instanceof Array) {
+            } else if (Array.isArray(memberValue)) {
                 // array => [...]
                 commands.push(`${memberName} = [\n      ${memberValue.join(',\n      ')}\n   ]`);
             } else {
@@ -108,7 +129,15 @@ export default class BaseAPI {
         if (!username) throw new Error('No username has been entered');
         if (!password) throw new Error('No password has been entered');
         
-        console.log(`Credentials: ${username}@${password}`);
+        this.jser.warnMessage('Please, override <i>onLogin</i> method');
+    }
+    
+    public editor(filename: string) {
+        this.jser.warnMessage('TO-DO');
+    }
+    
+    public run(filename: string) {
+        this.jser.warnMessage('TO-DO');
     }
     
 }

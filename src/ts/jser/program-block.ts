@@ -3,12 +3,12 @@ import {repeatString} from './utils';
 /**
  * Matches open bracket
  */
-const BEGIN_BLOCK_RE = /{$/;
+const BEGIN_BLOCK_RE: RegExp = /{$/;
 
 /**
  * Matches closing bracket
  */
-const END_BLOCK_RE = /}$/;
+const END_BLOCK_RE: RegExp = /}$/;
 
 /**
  * Keeps track of lines of program. Used when writing blocks {}

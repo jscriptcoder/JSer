@@ -3,17 +3,17 @@ import {extend, getMemberFrom} from './utils';
 /**
  * Matches function params list
  */
-const FUNC_PARAMS_RE = /[a-z0-9_\$]+/gi;
+const FUNC_PARAMS_RE: RegExp = /[a-z0-9_\$]+/gi;
 
 /**
  * Matches function signature
  */
-const FUNC_SIGNATURE_RE = /^function\s*[^\(]*\(\s*[^\)]*\)/;
+const FUNC_SIGNATURE_RE: RegExp = /^function\s*[^\(]*\(\s*[^\)]*\)/;
 
 /**
  * Matches just function and name
  */
-const FUNC_AND_NAME_RE = /function\s*[^\(]*/;
+const FUNC_AND_NAME_RE: RegExp = /function\s*[^\(]*/;
 
 /**
  * Wrapper for the api. It'll run javascript against it and extend it
@@ -64,7 +64,7 @@ export default class ApiWrapper {
             if (typeof memberValue === 'function') {
                 // methodName([...args])
                 this.__commands__.push(memberValueString.match(FUNC_SIGNATURE_RE)[0].replace(FUNC_AND_NAME_RE, memberName));
-            } else if (memberValue instanceof Array) {
+            } else if (Array.isArray(memberValue)) {
                 // array => [...]
                 this.__commands__.push(`${memberName} = [ ${memberValue.join(', ')} ]`);
             } else {
@@ -149,6 +149,13 @@ export default class ApiWrapper {
             
         }
 
+    }
+    
+    public init() {
+        if (typeof this.__api__['init'] === 'function') {
+            this.__api__['init']();
+            //delete this.__api__['init'];
+        }
     }
     
     /**

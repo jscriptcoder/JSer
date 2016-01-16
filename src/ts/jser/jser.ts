@@ -19,6 +19,7 @@ interface JSerConfig {
     warnColor?: string,
     errorColor?: string,
     promptSymbol?: string;
+    promptPassword?: string,
     historyLimit?: number
     tabLength?: number;
     active?: boolean;
@@ -36,6 +37,7 @@ const DEFAULT_CONFIG: JSerConfig = {
     warnColor: '#f0ad4e',
     errorColor: '#a94442',
     promptSymbol: 'jser>',
+    promptPassword: 'Password:',
     historyLimit: 50,
     tabLength: 4,
     active: true
@@ -103,6 +105,8 @@ export default class JSer extends ElementWrapper {
         
         this.__generateStyles__();
         this.__render__();
+        
+        this.__api__.init();
     }
     
     /**
@@ -355,10 +359,11 @@ export default class JSer extends ElementWrapper {
     
     /**
      * Goes into password mode (changes symbol and hides typing)
+     * todo: maybe some more generic mode?
      */
     public passwordMode(onPassword: (password: string) => void) {
         this.clearPrompt();
-        this.__prompt__.symbol = 'Password:';
+        this.__prompt__.symbol = this.__config__.promptPassword;
         this.__prompt__.hideTyping = true;
         this.__onPassword__ = onPassword;
     }
