@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="../typings/es6-shim/es6-shim.d.ts" />
 
 import * as utils from './utils';
 import * as tmpl from './templates';
@@ -98,7 +98,7 @@ export default class JSer extends ElementWrapper {
         
         this.__uid__ = utils.uid();
         this.__name__ = `jser_${this.__uid__}`;
-        this.__config__ = utils.extend({}, DEFAULT_CONFIG, config);
+        this.__config__ = Object.assign({}, DEFAULT_CONFIG, config);
         
         this.__click__ = new ClickHook(this.__el__, this.__clickHandler__.bind(this));
         this.__api__ = new ApiWrapper(this.__name__, utils.extend(new BaseAPI(this), api));
@@ -174,13 +174,15 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
-     * On password mode, when the user enters the password, this method gets triggered
+     * On password mode, when the user enters the password, this method 
+     * gets triggered, possibly returning a promise. But it's not all said
      */
-    private onPassword(command: string) {
-        this.__onPassword__(command);
+    private onPassword(command: string): any {
+        let onPassResult = this.__onPassword__(command);
         this.__onPassword__ = void 0;
         this.__prompt__.resetSymbol();
         this.__prompt__.hideTyping = false;
+        return onPassResult;
     }
     
     /**
@@ -189,8 +191,9 @@ export default class JSer extends ElementWrapper {
     private __onEnter__(command: string, run: boolean) {
         
         if (this.isPasswordMode) {
-            
-            this.onPassword(command);
+            // password mode
+            let onPassResult = this.onPassword(command);
+            this.__processCommandResult__(onPassResult);
             
         } else {
             
@@ -198,26 +201,30 @@ export default class JSer extends ElementWrapper {
 
             if (command && run) {
                 // let's process the command
-                
                 let [evalResult, type] = this.__api__.exec(command);
-
-                if (evalResult instanceof Promise) {
-
-                    this.promptWaiting();
-
-                    evalResult
-                        .then(this.__promiseThen__.bind(this))
-                        .catch(this.__promiseCatch__.bind(this))
-                    ;
-
-                } else if (evalResult) {
-                    this.print(evalResult, type);    
-                }
-
+                this.__processCommandResult__(evalResult, type);
             }
             
         }
         
+    }
+    
+    /**
+     * Process the result of a command, printing a "type" message
+     */
+    private __processCommandResult__(result: any, type?: string) {
+        if (result instanceof Promise) {
+
+            this.promptWaiting();
+
+            result
+                .then(this.__promiseThen__.bind(this))
+                .catch(this.__promiseCatch__.bind(this))
+            ;
+
+        } else if (result) {
+            this.print(result, type);
+        }
     }
     
     /**

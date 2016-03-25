@@ -1,10 +1,8 @@
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-
 import JSer from '../jser/jser';
 
 export default class TestAPI {
     
-    private __jser__: JSer;
+    public jser: JSer;
     
     public apiName: string = 'TestAPI';
     
@@ -43,15 +41,15 @@ export default class TestAPI {
     }
     
     public asyncTest(...args) {
-        this.__jser__.promptWaiting();
+        this.jser.promptWaiting();
         
         setTimeout(() => {
-            this.__jser__.promptWaiting(false);
+            this.jser.promptWaiting(false);
             
             if (args[0] === 'error') {
-                this.__jser__.errorMessage(`[ERROR] Testing ${args.length ? args.join(', ') : ''}`);   
+                this.jser.errorMessage(`[ERROR] Testing ${args.length ? args.join(', ') : ''}`);   
             } else {
-                this.__jser__.infoMessage(`Testing ${args.length ? args.join(', ') : ''}`);
+                this.jser.infoMessage(`Testing ${args.length ? args.join(', ') : ''}`);
             }
         }, 3000);
     }

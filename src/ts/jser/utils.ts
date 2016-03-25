@@ -28,6 +28,7 @@ export const uid: {(): number} = (() => {
 
 /**
  * Extends target object adding key/value pairs from sources
+ * It grabs members also from the prototype chain
  */
 export function extend(target: Object, ...sources: Object[]): Object {
     if (Array.isArray(sources)) {

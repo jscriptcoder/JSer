@@ -3,8 +3,7 @@ import JSer from '../jser/jser';
 const HEADER_MESSAGE: string = `
 <pre>
 /**
- * The adventure begins here. Type <i>lsc</i> to see the available commands...
- * Remember, this is all about coding in JavaScript, and you'll discover an amazing world ;-)
+ * ..:: JSer ::..
  *
  * <strong>@author</strong> <i>Francisco Ramos <<a href="mailto:fran@jscriptcoder.com">fran@jscriptcoder.com</a>></i>
  * <strong>@version</strong> <i>who.cares.0</i>
@@ -116,28 +115,43 @@ export default class BaseAPI {
             this.jser.passwordMode((password: string) => this.login(username, password));
             
         } else {
-            this.onLogin(username, password);
+            return this.backendLogin(username, password);
         }
         
     }
     
     /**
-     * Gets trigger when the user has entered credentials (username and password)
+     * Will send the credentials to the backend (username and password)
      * Must be overriden
      */
-    public onLogin(username: string, password: string) {
+    protected backendLogin(username: string, password: string): Promise<any> {
         if (!username) throw new Error('No username has been entered');
         if (!password) throw new Error('No password has been entered');
         
-        this.jser.warnMessage('Please, override <i>onLogin</i> method');
+        this.jser.warnMessage('Please, override <i>backendLogin</i> method');
+        
+        return Promise.resolve();
     }
     
-    public editor(filename: string) {
-        this.jser.warnMessage('TO-DO');
+    /**
+     * Writes (or creates) a file
+     */
+    public write(filename: string) {
+        this.jser.warnMessage("TO-DO... Needs permissions to write, <i>W</i>");
     }
     
-    public run(filename: string) {
-        this.jser.warnMessage('TO-DO');
+    /**
+     * Outputs the content of the file
+     */
+    public read(filename: string) {
+        this.jser.warnMessage('TO-DO... Needs permissions to read, <i>R</i>');
+    }
+    
+    /**
+     * Runs a file (will throw an exception if it's not a js program)
+     */
+    public exec(filename: string) {
+        this.jser.warnMessage('TO-DO... Needs permissions to execute, <i>X</i>');
     }
     
 }
