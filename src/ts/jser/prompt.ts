@@ -563,6 +563,9 @@ export default class Prompt extends ElementWrapper {
         const openingBlock = !!command.match(program.BEGIN_BLOCK_RE);
         const closingBlock = !!command.match(program.END_BLOCK_RE);
         
+        // we store the command only if we're not hiding the typing
+        !this.__hideTyping__ && this.__history__.add(command);
+        
         // Warning: tricky logic coming up
         
         // if
@@ -588,7 +591,6 @@ export default class Prompt extends ElementWrapper {
         }
         
         this.__onEnter__(command, !inProgram);
-        this.__history__.add(command);
         this.clear();
         
         if (inProgram) {
@@ -607,6 +609,7 @@ export default class Prompt extends ElementWrapper {
             // returns the symbol if a program finished
             this.resetSymbol();
         }
+        
     }
     
     /**

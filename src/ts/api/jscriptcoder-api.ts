@@ -5,6 +5,7 @@ const HEADER_MESSAGE: string = `
 /**
  * The adventure begins here. Type <i>lsc</i> to list the available commands...
  * Remember, this is all about coding in JavaScript, and you'll discover an amazing world ;-)
+ * NOTE: still working on it
  *
  * <strong>@author</strong> <i>Francisco Ramos <<a href="mailto:fran@jscriptcoder.com">fran@jscriptcoder.com</a>></i>
  * <strong>@version</strong> <i>who.cares.0</i>
@@ -20,6 +21,9 @@ export default class JScriptCoderAPI {
      */
     public jser: JSer;
     
+    /**
+     * Shows the intro message for this API
+     */
     public init() {
         this.jser.infoMessage(HEADER_MESSAGE);
     }
@@ -67,15 +71,17 @@ export default class JScriptCoderAPI {
     /**
      * Will send the credentials to the backend (username and password)
      */
+    /*
     protected backendLogin(username: string, password: string) {
         if (!username) throw new Error('No username has been entered');
         if (!password) throw new Error('No password has been entered');
         
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                resolve("I'm all logged in");
+                resolve("TO-DO: I'm all logged in");
             }, 3000);
         });
     }
+    */
     
 }

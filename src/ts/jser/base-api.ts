@@ -128,30 +128,28 @@ export default class BaseAPI {
         if (!username) throw new Error('No username has been entered');
         if (!password) throw new Error('No password has been entered');
         
-        this.jser.warnMessage('Please, override <i>backendLogin</i> method');
-        
-        return Promise.resolve();
+        return Promise.resolve('Please, override <i>backendLogin</i> method');
     }
     
     /**
      * Writes (or creates) a file
      */
     public write(filename: string) {
-        this.jser.warnMessage("TO-DO... Needs permissions to write, <i>W</i>");
+        this.jser.warnMessage("Needs permissions to write, <i>W</i>");
     }
     
     /**
      * Outputs the content of the file
      */
     public read(filename: string) {
-        this.jser.warnMessage('TO-DO... Needs permissions to read, <i>R</i>');
+        this.jser.warnMessage('Needs permissions to read, <i>R</i>');
     }
     
     /**
      * Runs a file (will throw an exception if it's not a js program)
      */
     public exec(filename: string) {
-        this.jser.warnMessage('TO-DO... Needs permissions to execute, <i>X</i>');
+        this.jser.warnMessage('Needs permissions to execute, <i>X</i>');
     }
     
 }
