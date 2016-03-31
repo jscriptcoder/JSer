@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
-    tsc = require('gulp-typescript');
+    tsc = require('gulp-typescript'),
+    Builder = require('systemjs-builder');
 
 gulp.task('sass', function () {
     gulp.src('./src/scss/**/*.scss')
@@ -17,9 +18,12 @@ gulp.task('tsc', function () {
         .pipe(gulp.dest('build/js'));
 });
 
-gulp.task('compile', ['sass', 'tsc']);
-
-gulp.task('default', function () {
-    gulp.watch('./src/scss/**/*.scss', ['sass']);
-    gulp.watch('./src/ts/**/*.ts', ['tsc']);
+gulp.task('build', function () {
+    var jserBuilder = new Builder('build/js/', { defaultJSExtensions: true });
+    var jscriptcoderBuilder = new Builder('build/js/api/', { defaultJSExtensions: true });
+    
+    jserBuilder.bundle('jser/jser.js', 'dist/jser/jser.js');
+    jserBuilder.bundle('api/jscriptcoder-api.js', 'dist/api/jscriptcoder-api.js');
 });
+
+gulp.task('compile', ['sass', 'tsc', 'build']);

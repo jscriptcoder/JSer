@@ -23,6 +23,7 @@
     "systemjs": "~0.19.5",
     "codemirror": "~5.10.0",
     "js-md5": "~0.4.0",
-    "es6-shim": "~0.35.0"
+    "es6-shim": "~0.35.0",
+    "systemjs-builder": "~0.15.14"
   }
 }
