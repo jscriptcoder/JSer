@@ -2,7 +2,33 @@
 <html>
 <head>
     <title>..:: JSer Test ::..</title>
-    <link rel="stylesheet" href="build/css/styles.css" />
+    
+    <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .cell {
+            width: 50%;
+            height: 100%;
+            float: left;
+        }
+
+        .jser-test {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    
 </head>
 <body>
 
@@ -20,7 +46,7 @@
     
     <script>
         System.config({
-            baseURL: './build/js/',
+            baseURL: './js/',
             defaultJSExtensions: true
         });
         System.import('index');

@@ -1,4 +1,5 @@
-import JSer from '../jser/jser';
+import JSer from './jser';
+import Editor from './editor';
 
 const HEADER_MESSAGE: string = `
 <pre>

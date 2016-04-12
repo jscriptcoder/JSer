@@ -4,7 +4,9 @@
   "description": "Work in progress",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tsc": "tsc --target ES5 --module system --outDir js src/ts/index.ts",
+    "build": "node system-build.js",
+    "dist": "npm run tsc && npm run build"
   },
   "repository": {
     "type": "git",
@@ -17,13 +19,11 @@
   },
   "homepage": "https://github.com/jscriptcoder/JSer",
   "devDependencies": {
-    "gulp": "~3.9.0",
-    "gulp-sass": "~2.0.4",
-    "gulp-typescript": "~2.9.2",
     "systemjs": "~0.19.5",
     "codemirror": "~5.10.0",
     "js-md5": "~0.4.0",
     "es6-shim": "~0.35.0",
-    "systemjs-builder": "~0.15.14"
+    "systemjs-builder": "~0.15.14",
+    "typescript": "~1.8.9"
   }
 }

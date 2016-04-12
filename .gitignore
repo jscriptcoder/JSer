@@ -1,5 +1,4 @@
 .codio
-.idea
 node_modules
 build
-dist
+js
