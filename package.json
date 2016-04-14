@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc --target ES5 --module system --outDir js src/ts/index.ts",
-    "build": "node system-build.js",
+    "build": "node tools/system-build.js",
     "dist": "npm run tsc && npm run build"
   },
   "repository": {
