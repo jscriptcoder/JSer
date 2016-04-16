@@ -1,4 +1,4 @@
-/// <reference path="../typings/es6-shim/es6-shim.d.ts" />
+/// <reference path="../../typings/es6-shim/es6-shim.d.ts" />
 
 import * as utils from './utils';
 import * as tmpl from './templates';

@@ -4,9 +4,9 @@
   "description": "Work in progress",
   "main": "index.js",
   "scripts": {
-    "tsc": "tsc --target ES5 --module system --outDir js src/ts/index.ts",
+    "tsc": "tsc --target ES5 --module system --outDir js src/index.ts",
     "build": "node tools/system-build.js",
-    "dist": "npm run tsc && npm run build"
+    "prebuild": "npm run tsc"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "js-md5": "~0.4.0",
     "es6-shim": "~0.35.0",
     "systemjs-builder": "~0.15.14",
-    "typescript": "~1.8.9"
+    "typescript": "~1.8.9",
+    "uglify-js": "~2.6.2"
   }
 }

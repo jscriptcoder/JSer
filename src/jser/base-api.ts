@@ -25,6 +25,7 @@ export default class BaseAPI {
     
     constructor(jser: JSer) {
         this.__jser__ = jser;
+        new Editor();
     }
     
     /**
