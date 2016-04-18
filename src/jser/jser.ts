@@ -376,6 +376,21 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
+     * getter method for JSerConfig
+     */
+    public get config(): JSerConfig {
+        return this.__config__;
+    }
+    
+    /**
+     * Activates or not jser
+     */
+    public set active(is: boolean) {
+        this.__prompt__.active = is;
+        this.__click__.active = is;
+    }
+    
+    /**
      * Destroys the instance
      */
     public destroy() {

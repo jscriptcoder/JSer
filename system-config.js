@@ -2,19 +2,18 @@ System.config({
     baseURL: './src',
     transpiler: 'typescript',
     map: {
-        codemirrorlib: '../node_modules/codemirror/lib/codemirror.js',
-        codemirrormodejs: '../node_modules/codemirror/mode/javascript/javascript.js'
+        codemirror: '../node_modules/codemirror'
     },
     packages: {
-        codemirrorlib: {
-            defaultExtension: false
+        codemirror: {
+            defaultExtension: 'js'
         },
         '/': {
             defaultExtension: 'ts'
         }
     },
     meta: {
-        codemirrorlib: {
+        'codemirror/lib/codemirror.js': {
             exports: 'CodeMirror',
             format: 'amd'
         }

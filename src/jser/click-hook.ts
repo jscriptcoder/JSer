@@ -11,6 +11,11 @@ export default class ClickHook {
     private __target__: HTMLElement;
     
     /**
+     * Indicates whether or not to capture events
+     */
+    private __capture__: boolean;
+    
+    /**
      * Event handler for focus
      */
     private __onClickHandler__: Function;
@@ -32,6 +37,7 @@ export default class ClickHook {
     
     constructor(target: HTMLElement, onClickHandler: Function) {
         this.__target__ = target;
+        this.__capture__ = true;
         this.__onClickHandler__ = onClickHandler;
         this.__addEventListeners__();
     }
@@ -53,6 +59,7 @@ export default class ClickHook {
      * Event handler for click
      */
     private __onClick__(e: MouseEvent) {
+        if (!this.__capture__) return;
         
         // if this is triggered we're getting back the focus but 
         // we need to defer to wait for the event bubbling to finish
@@ -63,6 +70,8 @@ export default class ClickHook {
      * Event handler for documentClick
      */
     private __onDocumentClick__(e: MouseEvent) {
+        if (!this.__capture__) return;
+        
         // if this is triggered it means we're losing the focus
         this.__onClickHandler__('blur');
     }
@@ -71,7 +80,16 @@ export default class ClickHook {
      * Event handler for windowBlur
      */
     private __onWindowBlur__(e: MouseEvent) {
+        if (!this.__capture__) return;
+        
         this.__onClickHandler__('blur');
+    }
+    
+    /**
+     * Stops/Starts capturing events
+     */
+    public set capture(capture: boolean) {
+        this.__capture__ = capture;
     }
     
     /**

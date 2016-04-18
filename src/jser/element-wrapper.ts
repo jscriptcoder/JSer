@@ -103,4 +103,25 @@ export default class ElementWrapper {
         this.__el__.scrollIntoView(true);
     }
     
+    /**
+     * Returns the DOM element
+     */
+    public get element(): HTMLElement {
+        return this.__el__;
+    }
+    
+    /**
+     * Inline-styles the element from a hashmap {key: value}
+     * Note: key styles are lowerCamelCase
+     */
+    public style(styles: {[key: string]: string}) {
+        
+        if (styles && typeof styles === 'object') {
+            for(let key of Object.keys(styles)) {
+                this.__el__.style[key] = styles[key];
+            }
+        }
+        
+    }
+    
 }

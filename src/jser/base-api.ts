@@ -23,9 +23,14 @@ export default class BaseAPI {
      */
     private __jser__: JSer;
     
+    /**
+     * Current editor opened
+     * @see Editor
+     */
+    private __editor__: Editor;
+    
     constructor(jser: JSer) {
         this.__jser__ = jser;
-        new Editor();
     }
     
     /**
@@ -137,7 +142,8 @@ export default class BaseAPI {
      * Writes (or creates) a file
      */
     public write(filename: string) {
-        this.jser.warnMessage("Needs permissions to write, <i>W</i>");
+        this.jser.active = false;
+        this.__editor__ = new Editor(this.jser.element, {});
     }
     
     /**

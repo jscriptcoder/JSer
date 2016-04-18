@@ -151,6 +151,61 @@ export const JSER_STYLES_TMPL: string = `
         animation: jser_$uid-spin 1s infinite steps(1);
     }
 
+    .jser_$uid .CodeMirror {
+        font-family: $font-family;
+        font-size: $font-size;
+        height: 100%;
+        color: $font-color;
+        background-color: $background-color;
+    }
+
+    .jser_$uid .CodeMirror-selected { background: #3a3432; }
+
+    .jser_$uid .CodeMirror-line::selection, 
+    .jser_$uid .CodeMirror-line > span::selection, 
+    .jser_$uid .CodeMirror-line > span > span::selection { background: rgba(58, 52, 50, .99); }
+
+    .jser_$uid .CodeMirror-line::-moz-selection, 
+    .jser_$uid .CodeMirror-line > span::-moz-selection, 
+    .jser_$uid .CodeMirror-line > span > span::-moz-selection { background: rgba(58, 52, 50, .99); }
+
+    .jser_$uid .CodeMirror-gutters {
+        background: $background-color;
+        border-right: 0px;
+    }
+    .jser_$uid .CodeMirror-guttermarker { color: #db2d20; }
+    .jser_$uid .CodeMirror-guttermarker-subtle { color: #5c5855; }
+    .jser_$uid .CodeMirror-linenumber { color: #5c5855; }
+
+    .jser_$uid .CodeMirror-cursor { border-left: 1px solid #807d7c; }
+
+    .jser_$uid span.cm-comment { color: #cdab53; }
+    .jser_$uid span.cm-atom { color: #a16a94; }
+    .jser_$uid span.cm-number { color: #a16a94; }
+
+    .jser_$uid span.cm-property, 
+    .jser_$uid span.cm-attribute { color: #01a252; }
+
+    .jser_$uid span.cm-keyword { color: #db2d20; }
+    .jser_$uid span.cm-string { color: #fded02; }
+
+    .jser_$uid span.cm-variable { color: #01a252; }
+    .jser_$uid span.cm-variable-2 { color: #01a0e4; }
+    .jser_$uid span.cm-def { color: #e8bbd0; }
+    .jser_$uid span.cm-bracket { color: #d6d5d4; }
+    .jser_$uid span.cm-tag { color: #db2d20; }
+    .jser_$uid span.cm-link { color: #a16a94; }
+    .jser_$uid span.cm-error {
+        background: #db2d20;
+        color: #807d7c;
+    }
+
+    .jser_$uid .CodeMirror-activeline-background { background: #2F2F2F; }
+    .jser_$uid .CodeMirror-matchingbracket {
+        text-decoration: underline;
+        color: white !important;
+    }
+
 `;
 
 /**
@@ -167,5 +222,5 @@ export const JSER_TMPL: string = `
                 <span class="jser-prompt-cursor blink">&nbsp;</span>
             </span>
         </div>
-    <div>
+    </div>
 `;
