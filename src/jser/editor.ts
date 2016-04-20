@@ -2,12 +2,11 @@ import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/keymap/vim';
 
-import {createElement} from './utils';
+import {createElement, compileTemplate} from './utils';
+import {EDITOR_TMPL} from './templates'
 import ElementWrapper from './element-wrapper';
 
-interface EditorConfig {
-    
-}
+interface EditorConfig {}
 
 /**
  * Editor component, wrapping CodeMirror
@@ -37,8 +36,6 @@ export default class Editor extends ElementWrapper {
             container.style.position = 'relative';
         }
         
-        this.__container__ = container;
-        
         this.style({
             position: 'absolute',
             top: 0,
@@ -47,16 +44,21 @@ export default class Editor extends ElementWrapper {
             height: '100%'
         });
         
+        this.html = compileTemplate(EDITOR_TMPL, {
+            date: new Date(),
+            user: 'anonymous'
+        });
+        
         container.appendChild(this.__el__);
         
-        this.__codemirror__ = new CodeMirror(this.__el__, {
-            inputStyle: 'contenteditable',
+        this.__codemirror__ = CodeMirror.fromTextArea(this.find('textarea'), {
+            inputStyle: 'textarea',
             mode: 'javascript',
             keyMap: 'vim',
-            lineNumbers: true,
-            matchBrackets: true,
-            showCursorWhenSelecting: true
+            lineNumbers: true
         });
+        
+        this.__container__ = container;
     }
     
     public destroy() {
