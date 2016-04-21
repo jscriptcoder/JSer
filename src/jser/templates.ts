@@ -155,7 +155,7 @@ export const JSER_STYLES_TMPL: string = `
 	font-family: $font-family;
 	font-size: $font-size;
 	height: 100%;
-	color: $font-color;
+	color: white;
 	background-color: $background-color;
 }
 
@@ -175,27 +175,28 @@ export const JSER_STYLES_TMPL: string = `
 }
 .jser_$uid .CodeMirror-guttermarker { color: #db2d20; }
 .jser_$uid .CodeMirror-guttermarker-subtle { color: #5c5855; }
-.jser_$uid .CodeMirror-linenumber { color: #5c5855; }
+.jser_$uid .CodeMirror-linenumber { color: $linenumber-color; }
 
 .jser_$uid .CodeMirror-cursor {
-    border-left: 1px solid #807d7c;
+    border-left: 1px solid $caret-color;
     background: $font-color;
 }
 
-.jser_$uid span.cm-comment { color: #cdab53; }
-.jser_$uid span.cm-atom { color: #a16a94; }
-.jser_$uid span.cm-number { color: #a16a94; }
+.jser_$uid span.cm-comment { color: $comment-color; }
+.jser_$uid span.cm-atom { color: $boolean-color; }
+.jser_$uid span.cm-number { color: $number-color; }
 
 .jser_$uid span.cm-property, 
-.jser_$uid span.cm-attribute { color: #01a252; }
+.jser_$uid span.cm-attribute { color: $property-color; }
 
-.jser_$uid span.cm-keyword { color: #db2d20; }
-.jser_$uid span.cm-string { color: #fded02; }
+.jser_$uid span.cm-keyword { color: $keyword-color; }
+.jser_$uid span.cm-string { color: $string-color; }
+.jser_$uid span.cm-string-2 { color: $string2-color; }
 
-.jser_$uid span.cm-variable { color: #01a252; }
-.jser_$uid span.cm-variable-2 { color: #01a0e4; }
-.jser_$uid span.cm-def { color: #e8bbd0; }
-.jser_$uid span.cm-bracket { color: #d6d5d4; }
+.jser_$uid span.cm-variable { color: $variable-color; }
+.jser_$uid span.cm-variable-2 { color: $variable2-color; }
+.jser_$uid span.cm-def { color: $definition-color; }
+.jser_$uid span.cm-bracket { color: $bracket-color; }
 .jser_$uid span.cm-tag { color: #db2d20; }
 .jser_$uid span.cm-link { color: #a16a94; }
 .jser_$uid span.cm-error {
@@ -203,10 +204,27 @@ export const JSER_STYLES_TMPL: string = `
 	color: #807d7c;
 }
 
-.jser_$uid .CodeMirror-activeline-background { background: #2F2F2F; }
+.jser_$uid .CodeMirror-activeline-background { background: $activeline-color; }
 .jser_$uid .CodeMirror-matchingbracket {
 	text-decoration: underline;
 	color: white !important;
+}
+
+.jser_$uid .CodeMirror-dialog {
+    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    width: 100%;
+}
+
+.jser_$uid .CodeMirror-dialog input {
+    border: 0;
+    outline: none;
+    padding: 0;
+	font-family: $font-family;
+	font-size: $font-size;
+	background-color: $background-color;
+	color: white;
 }
 `;
 
@@ -231,11 +249,11 @@ export const JSER_TMPL: string = `
  * Editor template
  */
 export const EDITOR_TMPL: string = `
-<textarea>
+<textarea autofocus>
 /**
  * Created with JSer
  * $date
- * By $user
+ * @author $user
  */
 </textarea>
 `;

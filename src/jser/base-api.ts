@@ -142,7 +142,8 @@ export default class BaseAPI {
      * Writes (or creates) a file
      */
     public write(filename: string) {
-        this.jser.active = false;
+        this.jser.activePrompt = false;
+        this.jser.captureClicks = false;
         this.__editor__ = new Editor(this.jser.element, {});
     }
     

@@ -55,7 +55,8 @@ export default class Editor extends ElementWrapper {
             inputStyle: 'textarea',
             mode: 'javascript',
             keyMap: 'vim',
-            lineNumbers: true
+            lineNumbers: true,
+            indentUnit: 4
         });
         
         this.__container__ = container;

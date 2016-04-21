@@ -15,14 +15,27 @@ interface JSerConfig {
     fontColor?: string;
     fontSize?: string;
     fontFamily?: string;
-    infoColor?: string,
-    warnColor?: string,
-    errorColor?: string,
+    infoColor?: string;
+    warnColor?: string;
+    errorColor?: string;
     promptSymbol?: string;
-    promptPassword?: string,
-    historyLimit?: number
+    promptPassword?: string;
+    historyLimit?: number;
     tabLength?: number;
     active?: boolean;
+    caretColor?: string;
+    linenumberColor?: string;
+    commentColor?: string;
+    booleanColor?: string;
+    numberColor?: string;
+    propertyColor?: string;
+    keywordColor?: string;
+    stringColor?: string;
+    variableColor?: string;
+    variable2Color?: string;
+    definitionColor?: string;
+    bracketColor?: string;
+    activelineColor?: string;
 }
 
 /**
@@ -40,7 +53,21 @@ const DEFAULT_CONFIG: JSerConfig = {
     promptPassword: 'Password:',
     historyLimit: 50,
     tabLength: 4,
-    active: true
+    active: true,
+    caretColor: '#807d7c',
+    linenumberColor: 'gray',
+    commentColor: 'gray',
+    booleanColor: '#FC0',
+    numberColor: '#FFEE98',
+    propertyColor: 'white',
+    keywordColor: '#CC7832',
+    stringColor: '#A5C25C',
+    string2Color: 'red',
+    variableColor: 'white',
+    variable2Color: '#8DA6CE',
+    definitionColor: '#8DA6CE',
+    bracketColor: '#d6d5d4',
+    activelineColor: '#2f2f2f'
 };
 
 /**
@@ -62,11 +89,6 @@ export default class JSer extends ElementWrapper {
      * List of configuration items
      */
     private __config__: JSerConfig;
-    
-    /**
-     * Indicates whether or not jser has the focus
-     */
-    private __active__: boolean;
     
     /**
      * Will contain the callback for entered password
@@ -122,7 +144,21 @@ export default class JSer extends ElementWrapper {
             'info-color': this.__config__.infoColor,
             'warn-color': this.__config__.warnColor,
             'error-color': this.__config__.errorColor,
-            'background-color': this.__config__.backgroundColor
+            'background-color': this.__config__.backgroundColor,
+            'caret-color': this.__config__.caretColor,
+            'linenumber-color': this.__config__.linenumberColor,
+            'comment-color': this.__config__.commentColor,
+            'boolean-color': this.__config__.booleanColor,
+            'number-color': this.__config__.numberColor,
+            'property-color': this.__config__.propertyColor,
+            'keyword-color': this.__config__.keywordColor,
+            'string-color': this.__config__.stringColor,
+            'string2-color': this.__config__.string2Color,
+            'variable-color': this.__config__.variableColor,
+            'variable2-color': this.__config__.variable2Color,
+            'definition-color': this.__config__.definitionColor,
+            'bracket-color': this.__config__.bracketColor,
+            'activeline-color': this.__config__.activelineColor
         });
 
         utils.injectStyles(stylesTmpl, this.__name__);
@@ -149,7 +185,7 @@ export default class JSer extends ElementWrapper {
             keyboardTarget: this.__el__
         });
         
-        this.__prompt__.active = this.__config__.active;
+        this.activePrompt = this.__config__.active;
     }
     
     /**
@@ -158,10 +194,10 @@ export default class JSer extends ElementWrapper {
     private __clickHandler__(action: string) {
         switch(action) {
             case 'focus': 
-                this.__prompt__.active = true;
+                this.activePrompt = true;
                 break;
             case 'blur':
-                this.__prompt__.active = false;
+                this.activePrompt = false;
                 break;
         }
     }
@@ -383,11 +419,17 @@ export default class JSer extends ElementWrapper {
     }
     
     /**
-     * Activates or not jser
+     * Activates or not the prompt
      */
-    public set active(is: boolean) {
+    public set activePrompt(is: boolean) {
         this.__prompt__.active = is;
-        this.__click__.active = is;
+    }
+    
+    /**
+     * Captures or not clicks
+     */
+    public set captureClicks(is: boolean) {
+        this.__click__.capture = is;
     }
     
     /**
