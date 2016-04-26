@@ -9,7 +9,7 @@ import ElementWrapper from './element-wrapper';
 interface EditorConfig {
     lineNumbers: boolean;
     indentUnit: number;
-    onSave: Function;
+    onWrite: Function;
     onQuit: Function;
 }
 
@@ -72,18 +72,24 @@ export default class Editor extends ElementWrapper {
             indentUnit: config.identUnit
         });
         
-        // configures the save (:w)
-        CodeMirror.commands.save = config.onSave;
-        // and quit (:q) commands
+        //todo: make this part better. It's shite
+        
+        // configures write (:w), quit (:q) and write and quit (:wq) commands
+        CodeMirror.Vim.defineEx('write', 'w', (cm: CodeMirror, info: any) => {
+            config.onWrite(cm.getValue(), info.args && info.args[0]);
+        });
+        
         CodeMirror.Vim.defineEx('quit', 'q', config.onQuit);
+        
+        CodeMirror.Vim.defineEx('wquit', 'wq', (cm: CodeMirror, info: any) => {
+            config.onWrite(cm.getValue(), info.args && info.args[0]);
+            config.onQuit();
+        });
 
         this.__container__ = container;
     }
     
     public destroy() {
-        CodeMirror.commands.save = noop;
-        CodeMirror.commands.quit = noop;
-        
         this.empty();
         
         this.__container__.removeChild(this.__el__);
