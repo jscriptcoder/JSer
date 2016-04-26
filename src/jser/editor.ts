@@ -72,10 +72,11 @@ export default class Editor extends ElementWrapper {
             indentUnit: config.identUnit
         });
         
-        // configures the save (:w) and quit (:q) commands
+        // configures the save (:w)
         CodeMirror.commands.save = config.onSave;
-        CodeMirror.commands.quit = config.onQuit;
-        
+        // and quit (:q) commands
+        CodeMirror.Vim.defineEx('quit', 'q', config.onQuit);
+
         this.__container__ = container;
     }
     

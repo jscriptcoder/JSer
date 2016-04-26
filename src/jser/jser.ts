@@ -441,8 +441,8 @@ export default class JSer extends ElementWrapper {
      * Call "resume" method to reactivate JSer
      */
     public pause(is: boolean = true) {
-        this.activePrompt = is;
-        this.captureClick = is;
+        this.activePrompt = !is;
+        this.captureClick = !is;
     }
     
     /**

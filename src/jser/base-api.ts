@@ -155,16 +155,16 @@ export default class BaseAPI {
             // todo: implement this logic to save
             exit();
         };
+       
+        jser.pause();
         
         editor = new Editor(jser.element, {
-            lineNumbers: jser.config,lineNumbers,
+            lineNumbers: jser.config.lineNumbers,
             indentUnit: jser.config.indentUnit,
             onSave: save,
             onQuit: exit
         });
-        
-        jser.pause();
-        
+       
     }
     
     /**
