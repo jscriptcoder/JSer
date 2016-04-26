@@ -140,11 +140,31 @@ export default class BaseAPI {
     
     /**
      * Writes (or creates) a file
+     * todo: needs permissions. Should this be in JSer instance?
      */
     public write(filename: string) {
-        this.jser.activePrompt = false;
-        this.jser.captureClicks = false;
-        this.__editor__ = new Editor(this.jser.element, {});
+        const jser: JSer = this.jser;
+        const editor: Editor;
+        
+        const exit = () => {
+            editor.destroy();
+            jser.resume();
+        };
+        
+        const save = () => {
+            // todo: implement this logic to save
+            exit();
+        };
+        
+        editor = new Editor(jser.element, {
+            lineNumbers: jser.config,lineNumbers,
+            indentUnit: jser.config.indentUnit,
+            onSave: save,
+            onQuit: exit
+        });
+        
+        jser.pause();
+        
     }
     
     /**

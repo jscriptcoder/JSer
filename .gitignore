@@ -1,4 +1,6 @@
 .codio
 node_modules
+typings
 build
 js
+typings.json

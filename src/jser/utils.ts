@@ -154,3 +154,8 @@ export function getMemberFrom(object: Object, path: string): any {
     
     return property;
 }
+
+/**
+ * Empty function
+ */
+export function noop() {}

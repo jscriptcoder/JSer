@@ -36,6 +36,8 @@ interface JSerConfig {
     definitionColor?: string;
     bracketColor?: string;
     activelineColor?: string;
+    lineNumbers?: boolean;
+    indentUnit?: number;
 }
 
 /**
@@ -67,7 +69,9 @@ const DEFAULT_CONFIG: JSerConfig = {
     variable2Color: '#8DA6CE',
     definitionColor: '#8DA6CE',
     bracketColor: '#d6d5d4',
-    activelineColor: '#2f2f2f'
+    activelineColor: '#2f2f2f',
+    lineNumbers: true,
+    indentUnit: 4
 };
 
 /**
@@ -430,6 +434,22 @@ export default class JSer extends ElementWrapper {
      */
     public set captureClicks(is: boolean) {
         this.__click__.capture = is;
+    }
+    
+    /**
+     * Pauses JSer activity deactivating prompt and click events
+     * Call "resume" method to reactivate JSer
+     */
+    public pause(is: boolean = true) {
+        this.activePrompt = is;
+        this.captureClick = is;
+    }
+    
+    /**
+     * Reactivates JSer that has been paused
+     */
+    public resume() {
+        this.pause(false);
     }
     
     /**
