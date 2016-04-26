@@ -146,24 +146,20 @@ export default class BaseAPI {
         const jser: JSer = this.jser;
         const editor: Editor;
         
-        const quit = () => {
-            editor.destroy();
-            jser.resume();
-        };
+        jser.pause();
         
-        const write = (content: string, writeAs?: string) => {
-            // todo: implement this logic to save
-            filename = filename || writeAs;
-        };
-       
         editor = new Editor(jser.element, {
             lineNumbers: jser.config.lineNumbers,
             indentUnit: jser.config.indentUnit,
-            onWrite: write,
-            onQuit: quit
+            onWrite: (content: string, writeAs?: string) => {
+                // todo: implement this logic to save
+                filename = filename || writeAs;
+            },
+            onQuit: () => {
+                editor.destroy();
+                jser.resume();
+            }
         });
-       
-        jser.pause();
     }
     
     /**
