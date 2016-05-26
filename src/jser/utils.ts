@@ -45,7 +45,7 @@ export function extend(target: Object, ...sources: Object[]): Object {
 /**
  * Returns a template replacing placeholders with values
  */
-export function compileTemplate(tmpl: string, hashMap: {[idx: string]: string}): string {
+export function compileTemplate(tmpl: string, hashMap: {[idx: string]: any}): string {
     for(let key of Object.keys(hashMap)) {
         tmpl = tmpl.replace(new RegExp(`\\$${key}`, 'g'), hashMap[key]);
     }

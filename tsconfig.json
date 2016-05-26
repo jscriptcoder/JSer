@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "outDir": "js"
+    },
+    "files": [
+        "typings/main.d.ts",
+        "src/index.ts"
+    ]
+}

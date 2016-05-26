@@ -1,5 +1,3 @@
-/// <reference path="../../typings/es6-shim/es6-shim.d.ts" />
-
 import * as utils from './utils';
 import * as tmpl from './templates';
 
@@ -31,6 +29,7 @@ interface JSerConfig {
     propertyColor?: string;
     keywordColor?: string;
     stringColor?: string;
+    string2Color?: string;
     variableColor?: string;
     variable2Color?: string;
     definitionColor?: string;
@@ -43,7 +42,7 @@ interface JSerConfig {
 /**
  * Configuration by default
  */
-const DEFAULT_CONFIG: JSerConfig = {
+export const DEFAULT_CONFIG: JSerConfig = {
     backgroundColor: 'black',
     fontColor: '#44d544',
     fontSize: '12px',
@@ -73,6 +72,7 @@ const DEFAULT_CONFIG: JSerConfig = {
     lineNumbers: true,
     indentUnit: 4
 };
+
 
 /**
  * Shell application for user interaction with custom APIs
@@ -432,7 +432,7 @@ export default class JSer extends ElementWrapper {
     /**
      * Captures or not clicks
      */
-    public set captureClicks(is: boolean) {
+    public set captureClick(is: boolean) {
         this.__click__.capture = is;
     }
     

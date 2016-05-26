@@ -1,12 +1,10 @@
 {
-  "name": "workspace",
-  "version": "0.0.0",
+  "name": "JSer",
+  "version": "0.1.0",
   "description": "Work in progress",
-  "main": "index.js",
+  "main": "js/index.js",
   "scripts": {
-    "tsc": "tsc --target ES5 --module system --outDir js src/index.ts",
-    "build": "node tools/system-build.js",
-    "prebuild": "npm run tsc"
+    "build": "node tools/system-build.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +24,13 @@
     "systemjs-builder": "~0.15.14",
     "typescript": "~1.8.9",
     "uglify-js": "~2.6.2"
+  },
+  "jspm": {
+    "dependencies": {
+      "codemirror": "npm:codemirror@^5.14.2"
+    },
+    "devDependencies": {
+      "typescript": "npm:typescript@^1.6.2"
+    }
   }
 }

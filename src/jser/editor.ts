@@ -1,7 +1,4 @@
-import CodeMirror from 'codemirror/lib/codemirror';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/keymap/vim';
-
+import CodeMirror from './codemirror-vim-setup';
 import {createElement, compileTemplate, noop} from './utils';
 import {EDITOR_TMPL} from './templates'
 import ElementWrapper from './element-wrapper';
@@ -48,6 +45,7 @@ export default class Editor extends ElementWrapper {
             container.style.position = 'relative';
         }
         
+        // positions editor, taking up the whole terminal screen
         this.style({
             position: 'absolute',
             top: 0,
@@ -56,6 +54,7 @@ export default class Editor extends ElementWrapper {
             height: '100%'
         });
         
+        // sets content by default
         this.html = compileTemplate(EDITOR_TMPL, {
             date: new Date(),
             user: 'anonymous'
@@ -69,12 +68,17 @@ export default class Editor extends ElementWrapper {
             mode: 'javascript',
             keyMap: 'vim',
             lineNumbers: config.lineNumbers,
-            indentUnit: config.identUnit
+            indentUnit: config.indentUnit,
+            vim: {
+                onWrite: config.onWrite,
+                onQuit: config.onQuit
+            }
         });
         
-        //todo: make this part better. It's shite
+        //todo: make this part better. It's definetely shite
         
         // configures write (:w), quit (:q) and write and quit (:wq) commands
+        /*
         CodeMirror.Vim.defineEx('write', 'w', (cm: CodeMirror, info: any) => {
             config.onWrite(cm.getValue(), info.args && info.args[0]);
         });
@@ -85,6 +89,7 @@ export default class Editor extends ElementWrapper {
             config.onWrite(cm.getValue(), info.args && info.args[0]);
             config.onQuit();
         });
+        */
 
         this.__container__ = container;
     }

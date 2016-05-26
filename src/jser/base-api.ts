@@ -144,11 +144,10 @@ export default class BaseAPI {
      */
     public write(filename: string) {
         const jser: JSer = this.jser;
-        const editor: Editor;
         
         jser.pause();
         
-        editor = new Editor(jser.element, {
+        const editor = new Editor(jser.element, {
             lineNumbers: jser.config.lineNumbers,
             indentUnit: jser.config.indentUnit,
             onWrite: (content: string, writeAs?: string) => {

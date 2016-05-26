@@ -1,19 +1,21 @@
 System.config({
-    baseURL: './src',
+    baseURL: 'src',
     transpiler: 'typescript',
     map: {
-        codemirror: '../node_modules/codemirror'
+        'codemirror': '../node_modules/codemirror/lib/codemirror.js',
+        'codemirror-lang-javascript': '../node_modules/codemirror/mode/javascript/javascript.js',
+        'codemirror-editor-vim': '../node_modules/codemirror/keymap/vim.js'
     },
     packages: {
-        codemirror: {
+        '../node_modules': {
             defaultExtension: 'js'
         },
-        '/': {
+        '.': {
             defaultExtension: 'ts'
         }
     },
     meta: {
-        'codemirror/lib/codemirror.js': {
+        'codemirror': {
             exports: 'CodeMirror',
             format: 'amd'
         }

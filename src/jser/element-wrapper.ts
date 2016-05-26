@@ -114,7 +114,7 @@ export default class ElementWrapper {
      * Inline-styles the element from a hashmap {key: value}
      * Note: key styles are lowerCamelCase
      */
-    public style(styles: {[key: string]: string}) {
+    public style(styles: {[key: string]: any}) {
         
         if (styles && typeof styles === 'object') {
             for(let key of Object.keys(styles)) {
